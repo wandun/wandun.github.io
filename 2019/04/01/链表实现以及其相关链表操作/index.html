@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>链表实现以及其相关链表操作 | Gxm</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="数据结构与算法,java,">
+  
+
+  <meta name="description" content="前言：  欢迎各位访问我的个人博客： www.guokangjie.cn  1、节点定义 主要分为 两部分：  下一个节点 当前节点的数据 这里没有使用private修饰两个属性，是为了之后的使用时不必使用set和get方法来访问123456789101112class LinkNode&amp;#123;    LinkNode next;    String data;        @Overri">
+<meta name="keywords" content="数据结构与算法,java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="链表实现以及其相关链表操作">
+<meta property="og:url" content="http://guokangjie.cn/2019/04/01/链表实现以及其相关链表操作/index.html">
+<meta property="og:site_name" content="Gxm">
+<meta property="og:description" content="前言：  欢迎各位访问我的个人博客： www.guokangjie.cn  1、节点定义 主要分为 两部分：  下一个节点 当前节点的数据 这里没有使用private修饰两个属性，是为了之后的使用时不必使用set和get方法来访问123456789101112class LinkNode&amp;#123;    LinkNode next;    String data;        @Overri">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190401172014575.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190331160530579.jpg">
+<meta property="og:updated_time" content="2019-04-01T10:30:23.758Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="链表实现以及其相关链表操作">
+<meta name="twitter:description" content="前言：  欢迎各位访问我的个人博客： www.guokangjie.cn  1、节点定义 主要分为 两部分：  下一个节点 当前节点的数据 这里没有使用private修饰两个属性，是为了之后的使用时不必使用set和get方法来访问123456789101112class LinkNode&amp;#123;    LinkNode next;    String data;        @Overri">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190401172014575.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+
+  
+
+  
+    <link rel="icon" href="/images/avatar.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1、节点定义"><span class="toc-text">1、节点定义</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2、定义单链表"><span class="toc-text">2、定义单链表</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-链表的增加与长度计算"><span class="toc-text">2.1 链表的增加与长度计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-链表的删除与输出"><span class="toc-text">2.2 链表的删除与输出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-链表的排序"><span class="toc-text">2.3 链表的排序</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-1-排序举例"><span class="toc-text">2.3.1 排序举例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-删除链表中重复的数据"><span class="toc-text">2.4 删除链表中重复的数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-找出链表中倒数第k个元素"><span class="toc-text">2.5 找出链表中倒数第k个元素</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-6-实现链表的反转"><span class="toc-text">2.6 实现链表的反转</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-7-从尾到头输出单链表"><span class="toc-text">2.7 从尾到头输出单链表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-寻找单链表中的中间节点"><span class="toc-text">2.8 寻找单链表中的中间节点</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-链表实现以及其相关链表操作" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">链表实现以及其相关链表操作</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.04.01</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>GuoKangJie</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/数据结构与算法/">数据结构与算法</a> / <a class="article-category-link" href="/categories/数据结构与算法/java/">java</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>﻿<strong>前言：</strong></p>
+<blockquote>
+<p><strong>欢迎各位访问我的个人博客： <a href="http://www.guokangjie.cn" target="_blank" rel="noopener">www.guokangjie.cn</a></strong></p>
+</blockquote>
+<h1 id="1、节点定义"><a href="#1、节点定义" class="headerlink" title="1、节点定义"></a>1、节点定义</h1><blockquote>
+<p>主要分为 两部分：</p>
+<ol>
+<li><strong>下一个节点</strong></li>
+<li><strong>当前节点的数据</strong></li>
+<li><strong>这里没有使用</strong>private<strong>修饰两个属性，是为了之后的使用时不必使用set和get方法来访问</strong><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LinkNode</span></span>&#123;</span><br><span class="line">    LinkNode next;</span><br><span class="line">    String data;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"LinkNode&#123;"</span> +</span><br><span class="line">                <span class="string">"next="</span> + next +</span><br><span class="line">                <span class="string">", data="</span> + data +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</blockquote>
+<h1 id="2、定义单链表"><a href="#2、定义单链表" class="headerlink" title="2、定义单链表"></a>2、定义单链表</h1><h2 id="2-1-链表的增加与长度计算"><a href="#2-1-链表的增加与长度计算" class="headerlink" title="2.1 链表的增加与长度计算"></a>2.1 链表的增加与长度计算</h2><blockquote>
+<ol>
+<li><strong>链表的增加只需要从头节点遍历到尾节点，在未节点添加数据，即可!</strong></li>
+<li><strong>计算链表的长度同理也是如此遍历到最后一个节点，在此过程中记录长度即可</strong></li>
+<li><strong>注意点需要为该类指定唯一的头节点（该节点很重要）</strong></li>
+</ol>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.gxm.linkedlist;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/3/31</span></span><br><span class="line"><span class="comment"> * 单链表的实现以及相关基本操作</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyLinkList</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 唯一的头节点</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> LinkNode head = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 增加节点</span></span><br><span class="line"><span class="comment">      * <span class="doctag">@param</span> data  节点数据</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> data)</span></span>&#123;</span><br><span class="line">       LinkNode newNode = <span class="keyword">new</span> LinkNode();</span><br><span class="line">       newNode.data = data;</span><br><span class="line">       <span class="keyword">if</span> (head == <span class="keyword">null</span>)&#123;</span><br><span class="line">           head = newNode;</span><br><span class="line">           <span class="keyword">return</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       LinkNode tmpNode = head;</span><br><span class="line">       <span class="keyword">while</span>( tmpNode.next != <span class="keyword">null</span> )&#123;</span><br><span class="line">           tmpNode = tmpNode.next;</span><br><span class="line">       &#125;</span><br><span class="line">       tmpNode.next = newNode;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 得到链表的长度</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">length</span><span class="params">()</span></span>&#123;</span><br><span class="line">       <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line">       LinkNode tmpNode = head;</span><br><span class="line">       <span class="keyword">while</span> (tmpNode != <span class="keyword">null</span>)&#123;</span><br><span class="line">           size ++ ;</span><br><span class="line">           tmpNode = tmpNode.next;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> size;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-2-链表的删除与输出"><a href="#2-2-链表的删除与输出" class="headerlink" title="2.2 链表的删除与输出"></a>2.2 链表的删除与输出</h2><blockquote>
+<ol>
+<li><strong>以下方法还是在之前的那个类中编写</strong></li>
+<li><strong>删除指定的数据节点，可以是传入一个节点去删除，也可以传入一个索引下表来删除（这里索引从0开始），都可以，思路都是遍历到该索引所在的位置节点，通过前一个节点指向当前节点的下一个节点，就把当前节点删除了!</strong></li>
+<li><strong>遍历就很简单了，疯狂遍历直到最后一个节点，每次数据节点信息即可!</strong></li>
+</ol>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据下表删除指定的链表节点数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> index 需要删除节点的下表 (从0开始)</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 是否成功</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">delete</span><span class="params">(<span class="keyword">int</span> index)</span></span>&#123;</span><br><span class="line">       <span class="keyword">if</span> (index &lt;<span class="number">0</span> || index &gt;= length())&#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">//删除头节点</span></span><br><span class="line">       <span class="keyword">if</span> (index == <span class="number">0</span>)&#123;</span><br><span class="line">           head = head.next;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">       <span class="comment">//前一个节点</span></span><br><span class="line">       LinkNode preNode = head;</span><br><span class="line">       <span class="comment">//当前节点</span></span><br><span class="line">       LinkNode curNode = head.next;</span><br><span class="line">       <span class="keyword">while</span> (curNode != <span class="keyword">null</span>)&#123;</span><br><span class="line">           <span class="comment">//匹配删除</span></span><br><span class="line">           <span class="keyword">if</span>(i == index)&#123;</span><br><span class="line">               preNode.next = curNode.next;</span><br><span class="line">               <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="comment">//不匹配继续遍历</span></span><br><span class="line">           preNode = curNode;</span><br><span class="line">           curNode = curNode.next;</span><br><span class="line">           i++;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 打印列表</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printList</span><span class="params">()</span></span>&#123;</span><br><span class="line">        LinkNode tmpNode = head;</span><br><span class="line">        <span class="keyword">while</span> (tmpNode != <span class="keyword">null</span>)&#123;</span><br><span class="line">            System.out.println(tmpNode.data);</span><br><span class="line">            tmpNode = tmpNode.next;</span><br><span class="line">        &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-3-链表的排序"><a href="#2-3-链表的排序" class="headerlink" title="2.3 链表的排序"></a>2.3 链表的排序</h2><blockquote>
+<ol>
+<li><strong>对链表排序(因为我这里节点信息存储的是int 所以直接比较大小 如果不是请按需处理)</strong></li>
+<li><strong>我这里采用冒泡排序的原理（排序方法很多 大家可以自行按需处理</strong>）</li>
+</ol>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">order</span><span class="params">()</span></span>&#123;</span><br><span class="line">      <span class="comment">// 第一层循环的节点</span></span><br><span class="line">      LinkNode curNode = head;</span><br><span class="line">      <span class="keyword">int</span> end = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">while</span> (curNode != <span class="keyword">null</span>)&#123;</span><br><span class="line">          <span class="comment">//第二层循环的节点1</span></span><br><span class="line">          LinkNode oneNode = curNode;</span><br><span class="line">          <span class="comment">//第二层循环的节点2</span></span><br><span class="line">          LinkNode twoNode = oneNode.next;</span><br><span class="line">         <span class="keyword">while</span> (twoNode != <span class="keyword">null</span>)&#123;</span><br><span class="line">              <span class="keyword">if</span>(oneNode.data &gt; twoNode.data)&#123;</span><br><span class="line">                  <span class="comment">// 互换</span></span><br><span class="line">                  <span class="keyword">int</span> data = oneNode.data;</span><br><span class="line">                  oneNode.data = twoNode.data;</span><br><span class="line">                  twoNode.data = data;</span><br><span class="line">              &#125;</span><br><span class="line">              <span class="comment">// 继续比较</span></span><br><span class="line">              oneNode = twoNode;</span><br><span class="line">              twoNode = twoNode.next;</span><br><span class="line">          &#125;</span><br><span class="line">         end++;</span><br><span class="line">         <span class="keyword">if</span>(end == length() - <span class="number">1</span>)&#123;</span><br><span class="line">             <span class="keyword">break</span>;</span><br><span class="line">         &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-1-排序举例"><a href="#2-3-1-排序举例" class="headerlink" title="2.3.1 排序举例"></a>2.3.1 排序举例</h3><blockquote>
+<p><strong>考虑到我排序写的不是很好，所以这里我做一个测试，把之前排序的每一个步骤写出来.测试数据如下</strong></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MyLinkList myLinkList = <span class="keyword">new</span> MyLinkList();</span><br><span class="line">       myLinkList.add(<span class="number">4</span>);</span><br><span class="line">       myLinkList.add(<span class="number">6</span>);</span><br><span class="line">       myLinkList.add(<span class="number">2</span>);</span><br><span class="line">       myLinkList.add(<span class="number">1</span>);</span><br><span class="line">       myLinkList.add(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>  第一遍：4 2 1 0 6<br>  第二遍：2 1 0 4 6<br>  第三遍：1 0 2 4 6<br>  第四遍：0 1 2 4 6</p>
+</blockquote>
+<p><strong>还是没有思路，请自行上网查找排序的思路!。。。。。</strong></p>
+<h2 id="2-4-删除链表中重复的数据"><a href="#2-4-删除链表中重复的数据" class="headerlink" title="2.4 删除链表中重复的数据"></a>2.4 删除链表中重复的数据</h2><blockquote>
+<p><strong>第一种思路：大家自然而然的就想到了遍历该链表，比较每一个元素，再去删除，但是时间复杂度会很大</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>第二种思路：大家也能想到不能重复的话，map不就可以完成吗，但是增加了空间复杂度</strong></p>
+</blockquote>
+<p><strong>我这里就以第二种方式来做说明</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 删除链表中重复的元素</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">deleteDuplecate</span><span class="params">()</span></span>&#123;</span><br><span class="line">      Hashtable&lt;Integer,Integer&gt; map = <span class="keyword">new</span> Hashtable&lt;Integer,Integer&gt;();</span><br><span class="line"></span><br><span class="line">      LinkNode preNode = head;</span><br><span class="line">      LinkNode curNode = head;</span><br><span class="line">      <span class="keyword">while</span> (curNode !=<span class="keyword">null</span>)&#123;</span><br><span class="line">          <span class="keyword">if</span>(!map.containsKey(curNode.data))&#123;</span><br><span class="line">              <span class="comment">//  key  就是当前值 对于value 这里没有要求所以都可以无所谓</span></span><br><span class="line">              map.put(curNode.data,<span class="number">1</span>);</span><br><span class="line">              <span class="comment">//继续执行判断</span></span><br><span class="line">              preNode = curNode;</span><br><span class="line">          &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">              <span class="comment">// 该节点以存在  删除该重复节点(并且只需要改变前节点的next即可)</span></span><br><span class="line">              preNode.next = curNode.next;</span><br><span class="line">          &#125;</span><br><span class="line">          curNode = curNode.next;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-5-找出链表中倒数第k个元素"><a href="#2-5-找出链表中倒数第k个元素" class="headerlink" title="2.5 找出链表中倒数第k个元素"></a>2.5 找出链表中倒数第k个元素</h2><blockquote>
+<p><strong>第一种思路： 得到链表的长度，再遍历到（n-k）个元素的位置不就ok了吗,但是得到链表长度需要遍历一边，再遍历一遍得到倒数第k个元素，这样需要遍历两次链表</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>第二种思路：如果从头至尾的方向从链表的某个元素开始，遍历k的元素正好到达链表结尾，那么这个元素就是我们需要的，但是这种方法大家想一下就能知道，在遍历每一个元素的时候，都需要向下遍历k个元素判断是否是末尾元素，其实效率也挺差的。</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>第三种思路：设置两个节点索引，两者距离相差k，知道后者到达尾节点，那么前者就是我们需要求得的元素，并且只需要遍历一边。</strong></p>
+</blockquote>
+<p><strong>我这里就以比较好的第三种方式实现</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 找出链表中倒数第k个元素</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> k  倒数第k个元素的下标</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span>   对应的节点</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> LinkNode <span class="title">findReciprocalElem</span><span class="params">(<span class="keyword">int</span> k)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 直接返回头节点</span></span><br><span class="line">    <span class="keyword">if</span>(k == length())&#123;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    LinkNode oneNode = head;</span><br><span class="line">    LinkNode twoNode = head;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;k;i++)&#123;</span><br><span class="line">        twoNode = twoNode.next;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 长度超出</span></span><br><span class="line">    <span class="keyword">if</span> (twoNode == <span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//直到 快的节点（twoNode）到达尾节点</span></span><br><span class="line">    <span class="keyword">while</span> (twoNode != <span class="keyword">null</span>)&#123;</span><br><span class="line">        oneNode = oneNode.next;</span><br><span class="line">        twoNode = twoNode.next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> oneNode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-6-实现链表的反转"><a href="#2-6-实现链表的反转" class="headerlink" title="2.6 实现链表的反转"></a>2.6 实现链表的反转</h2><blockquote>
+<p><strong>思路：将每一个链表的next的位置改变即可，注意最后需要改变头节点，不然你只是再当前改变，头节点信息没有改变，以后在使用时就会出现问题！（处理方式就是对遍历到的每一个节点分 前、后、以及当前、三个节点记录后再处理）</strong></p>
+</blockquote>
+<p><strong>代码如下：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 反转链表</span></span><br><span class="line"><span class="comment">  * 遍历到的每一个节点分 前、后、以及当前、三个节点记录后再处理</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">resverseLinked</span><span class="params">()</span></span>&#123;</span><br><span class="line">     LinkNode curNode = head;</span><br><span class="line">     LinkNode preNode = <span class="keyword">null</span>;</span><br><span class="line">     LinkNode nextNode;</span><br><span class="line">     <span class="keyword">while</span> (curNode != <span class="keyword">null</span>)&#123;</span><br><span class="line">         nextNode = curNode.next;</span><br><span class="line">         curNode.next = preNode;</span><br><span class="line">         preNode = curNode;</span><br><span class="line">         curNode = nextNode;</span><br><span class="line">     &#125;</span><br><span class="line">     head = preNode;  <span class="comment">//不要忘了改变头节点</span></span><br><span class="line">     <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-7-从尾到头输出单链表"><a href="#2-7-从尾到头输出单链表" class="headerlink" title="2.7 从尾到头输出单链表"></a>2.7 从尾到头输出单链表</h2><blockquote>
+<p><strong>第一种方式：相信大家能想到，反转链表后输出，但是遍历次数较多</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>第二种方式：使用递归，输出尾节点后再输出前面的节点</strong></p>
+</blockquote>
+<p><strong>我这里就写第二种方式：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 从尾到头输出单链表,使用递归的方式</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">resverseToPrint</span><span class="params">(LinkNode node)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(node.next == <span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="comment">//到达尾节点输出</span></span><br><span class="line">        System.out.println(node.data);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//没有到达尾节点，继续递归</span></span><br><span class="line">        resverseToPrint(node.next);</span><br><span class="line">        <span class="comment">// 上一次的结果以输出，可以输出这次的了</span></span><br><span class="line">        System.out.println(node.data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>因为该方法需要传入一个头节点，所以测试代码我这里给一下:</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">LinkNode head = <span class="keyword">new</span> LinkNode();</span><br><span class="line">       head.data = <span class="number">1</span>;</span><br><span class="line">       LinkNode sec = <span class="keyword">new</span> LinkNode();</span><br><span class="line">       sec.data = <span class="number">2</span>;</span><br><span class="line">       LinkNode thr = <span class="keyword">new</span> LinkNode();</span><br><span class="line">       thr.data = <span class="number">3</span>;</span><br><span class="line">       LinkNode fou = <span class="keyword">new</span> LinkNode();</span><br><span class="line">       fou.data = <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">       head.next = sec;</span><br><span class="line">       sec.next = thr;</span><br><span class="line">       thr.next = fou;</span><br><span class="line"></span><br><span class="line">       myLinkList.resverseToPrint(head);</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-8-寻找单链表中的中间节点"><a href="#2-8-寻找单链表中的中间节点" class="headerlink" title="2.8 寻找单链表中的中间节点"></a>2.8 寻找单链表中的中间节点</h2><blockquote>
+<p><strong>第一种方式：先遍历得到链表长度，在根据长度判断遍历到中间节点</strong><br><strong>第二种方式:  设置连个节点，但twoNode的速度是oneOnde遍历速度的一倍</strong></p>
+</blockquote>
+<p><strong>说明如下：</strong><br><img src="https://img-blog.csdnimg.cn/20190401172014575.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="描述"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  *  寻找单链表中的中间节点</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">public</span> LinkNode[] searchMidNode()&#123;</span><br><span class="line">    LinkNode []result = <span class="keyword">new</span> LinkNode[<span class="number">2</span>];</span><br><span class="line">    LinkNode oneNode = head;</span><br><span class="line">    LinkNode twoNode = head;</span><br><span class="line">    <span class="keyword">while</span> (oneNode != <span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span>(twoNode.next == <span class="keyword">null</span>)&#123;</span><br><span class="line">            result[<span class="number">0</span>] = oneNode;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (twoNode.next.next == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="comment">// 其实这里还有  oneNode.next</span></span><br><span class="line">            result[<span class="number">0</span>] = oneNode;</span><br><span class="line">            result[<span class="number">1</span>] = oneNode.next;</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">        oneNode = oneNode.next;</span><br><span class="line">        twoNode = twoNode.next.next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><blockquote>
+<p>1 . <strong>以上是部分链表的操作，关于代码的测试，我仅仅是测试了一遍，如果有错误，希望各位可以指出，非常感谢!!</strong><br>2 . <strong>部分代码的逻辑判断不是很严谨只是考虑了大多数情况！并没有做出很好的判断</strong></p>
+</blockquote>
+<p><img src="https://img-blog.csdnimg.cn/20190331160530579.jpg" alt></p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">希望对您有所帮助</span>
+      <div class="donation-body">
+        <div class="tip text-center">May all the ordinary are great, all the ignoble bloom</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>smile</span>
+            
+            <img src="/images/temp/1.jpeg" alt>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/03/17/使用百度api与oenpcv完成图片人脸检测并显示/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '277317290454635afa73',
+  clientSecret: '78223c859304da5e8d71bfce136d436c6ff95c37',
+  repo: 'blog-comment',
+  owner: 'forsigner',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: location.pathname,
+  admin: ['forsigner'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
