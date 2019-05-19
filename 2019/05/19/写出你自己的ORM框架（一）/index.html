@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>&#39;写出你自己的ORM框架（一) &#39; | Gxm</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="自己的ORM框架,java,">
+  
+
+  <meta name="description" content="前言：读完本片文章大约20分  代码地址 写出你自己的ORM框架（一） 写出你自己的ORM框架（二） 写出你自己的ORM框架（三） 写出你自己的ORM框架（四）一、架构说明  主要分为如下几个包，和以下几个类，接口（一级为包，二级（普通颜色为类，黄色为接口），加粗为说明）  cn.gxm.sorm.bean   ColumnInfo  对应数据库中的每一个字段结构 TableInfo  对应数据库">
+<meta name="keywords" content="自己的ORM框架,java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&#39;写出你自己的ORM框架（一) &#39;">
+<meta property="og:url" content="http://guokangjie.cn/2019/05/19/写出你自己的ORM框架（一）/index.html">
+<meta property="og:site_name" content="Gxm">
+<meta property="og:description" content="前言：读完本片文章大约20分  代码地址 写出你自己的ORM框架（一） 写出你自己的ORM框架（二） 写出你自己的ORM框架（三） 写出你自己的ORM框架（四）一、架构说明  主要分为如下几个包，和以下几个类，接口（一级为包，二级（普通颜色为类，黄色为接口），加粗为说明）  cn.gxm.sorm.bean   ColumnInfo  对应数据库中的每一个字段结构 TableInfo  对应数据库">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190517155101157.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190517155419102.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190517161339443.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:updated_time" content="2019-05-19T09:02:49.924Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="&#39;写出你自己的ORM框架（一) &#39;">
+<meta name="twitter:description" content="前言：读完本片文章大约20分  代码地址 写出你自己的ORM框架（一） 写出你自己的ORM框架（二） 写出你自己的ORM框架（三） 写出你自己的ORM框架（四）一、架构说明  主要分为如下几个包，和以下几个类，接口（一级为包，二级（普通颜色为类，黄色为接口），加粗为说明）  cn.gxm.sorm.bean   ColumnInfo  对应数据库中的每一个字段结构 TableInfo  对应数据库">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190517155101157.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+
+  
+
+  
+    <link rel="icon" href="/images/avatar.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、架构说明"><span class="toc-text">一、架构说明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、第一部分实现"><span class="toc-text">二、第一部分实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-0-实现db-properties文件，以及对应的映射类configuration"><span class="toc-text">2.0 实现db.properties文件，以及对应的映射类configuration</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-实现数据库中表对应的Pojo"><span class="toc-text">2.1 实现数据库中表对应的Pojo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-实现连接的提供，datasourse资源文件的映射"><span class="toc-text">2.2 实现连接的提供，datasourse资源文件的映射</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-根据数据库的表结构生成对应的pojo"><span class="toc-text">2.3 根据数据库的表结构生成对应的pojo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-完成Mysql字段类型与java数据类型的转换"><span class="toc-text">2.4 完成Mysql字段类型与java数据类型的转换</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-1-封装mysql字段类型"><span class="toc-text">2.4.1 封装mysql字段类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-2-实现具体的mysql字段类型与java类型转化"><span class="toc-text">2.4.2 实现具体的mysql字段类型与java类型转化</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三、完成javaFileUtils"><span class="toc-text">三、完成javaFileUtils</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-为完成javaFileUtils做出必要的准备"><span class="toc-text">3.1 为完成javaFileUtils做出必要的准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-1-为更好的解耦，我们抽取公用的方法放到工具类中"><span class="toc-text">3.1.1 为更好的解耦，我们抽取公用的方法放到工具类中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-2-设计一个属性的字段-与set，get方法"><span class="toc-text">3.1.2 设计一个属性的字段,与set，get方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-java的file生成我们在javaFileUtils工具类里面完成，其主要方法如下"><span class="toc-text">3.2 java的file生成我们在javaFileUtils工具类里面完成，其主要方法如下</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#四、完善TableContext"><span class="toc-text">四、完善TableContext</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-写出你自己的ORM框架（一）" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">&#39;写出你自己的ORM框架（一) &#39;</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.05.19</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>GuoKangJie</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/自己的ORM框架/">自己的ORM框架</a> / <a class="article-category-link" href="/categories/自己的ORM框架/java/">java</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>前言：读完本片文章大约20分</p>
+<ul>
+<li><a href="https://github.com/wandun/ORM" target="_blank" rel="noopener">代码地址</a></li>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90239643" target="_blank" rel="noopener">写出你自己的ORM框架（一）</a></li>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90295130" target="_blank" rel="noopener">写出你自己的ORM框架（二）</a></li>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90318186" target="_blank" rel="noopener">写出你自己的ORM框架（三）</a></li>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90295861" target="_blank" rel="noopener">写出你自己的ORM框架（四）</a><h1 id="一、架构说明"><a href="#一、架构说明" class="headerlink" title="一、架构说明"></a>一、架构说明</h1></li>
+</ul>
+<p><strong>主要</strong>分为如下几个包，和以下几个类，接口（一级为包，二级（普通颜色为类，黄色为接口），加粗为说明）</p>
+<ul>
+<li>cn.gxm.sorm.bean  <ul>
+<li>ColumnInfo  <strong>对应数据库中的每一个字段结构</strong></li>
+<li>TableInfo  <strong>对应数据库中的每表结构</strong></li>
+<li>Configuration <strong>映射资源文件（数据源 ，dataSource，将配置文件中的信息映射成对象）</strong></li>
+</ul>
+</li>
+<li>cn.gxm.sorm.core<ul>
+<li>DBManager  <strong>根据配置信息，维持连接对象的管理（增加连接池功能）</strong></li>
+<li>==Query==  <strong>操作数据库的核心接口，CRUD都在这里定义</strong></li>
+<li>QueryFactory  <strong>工厂模式创建核心 query 对象</strong></li>
+<li>TableContext  <strong>理数据库中的所有表和java中的对象的关系可以根据表生成java对象</strong></li>
+<li>==TypeConvertor==  <strong>用于数据数据类型与java数据类型转换，因为数据库的不同，类型转换也不同，所以定义为接口</strong></li>
+</ul>
+</li>
+<li>cn.gxm.sorm.utils<ul>
+<li>JavaFileUtils <strong>操作文件工具类</strong></li>
+<li>JDBCUtils  <strong>封装数据库连接操作工具类</strong></li>
+<li>ReflectUtils  <strong>反射的工具类</strong></li>
+<li>StringUtils   <strong>操作字符串的工具类</strong></li>
+</ul>
+</li>
+</ul>
+<h1 id="二、第一部分实现"><a href="#二、第一部分实现" class="headerlink" title="二、第一部分实现"></a>二、第一部分实现</h1><h2 id="2-0-实现db-properties文件，以及对应的映射类configuration"><a href="#2-0-实现db-properties文件，以及对应的映射类configuration" class="headerlink" title="2.0 实现db.properties文件，以及对应的映射类configuration"></a>2.0 实现db.properties文件，以及对应的映射类configuration</h2><ul>
+<li><p>db.properties文件即datasourse，连接数据库的必要参数，如下:<br>前四个大家都知道，</p>
+<ul>
+<li>srcPath 是以后使用我们这个框架项目的src路径</li>
+<li>pojoPackage 是我们根据数据库的表信息生成的pojo的位置<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">driver=com.mysql.jdbc.Driver</span><br><span class="line">url=jdbc:mysql://127.0.0.1:3306/sorm</span><br><span class="line">username=root</span><br><span class="line">password=123456</span><br><span class="line">srcPath=D://IntelliJ_IDEA//MyDemo//SORM//src</span><br><span class="line">pojoPackage=cn.gxm.sorm.pojo</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>configuration类就不用多说了(set,get等方法省略),如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 数据库驱动</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String driver;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 连接数据库url</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String url;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 数据库用户名</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 数据库密码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 项目src绝对路径</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String srcPath;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成的表对象的包路径</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String pojoPackage;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="2-1-实现数据库中表对应的Pojo"><a href="#2-1-实现数据库中表对应的Pojo" class="headerlink" title="2.1 实现数据库中表对应的Pojo"></a>2.1 实现数据库中表对应的Pojo</h2><p>后面我们将会通过数据库的元数据获取表，以及表中的字段，所以，我们需要对应的pojo，如下<br><strong>字段</strong>：(set,get等方法省略)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/5/15</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 对应数据库中的每一个字段结构</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ColumnInfo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 字段名称 例如 id,name,age</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 字段类型 例如 varchar</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String dataType;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 字段键类型 例如 1：普通键 2：主键 3：外键</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Integer keyType;</span><br></pre></td></tr></table></figure></p>
+<p><strong>表</strong> (set,get等方法省略)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/5/15</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 对应数据库中的表结构</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TableInfo</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 表的名称 例如 User</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 表中的字段,使用map为方便后期获取</span></span><br><span class="line"><span class="comment">     * 例如 map&lt;id,ColumnInfo&gt;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Map&lt;String,ColumnInfo&gt; columns;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 表中的唯一主键</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> ColumnInfo onlyPriKey;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 联合主键即（多个字段组成的主键）</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;ColumnInfo&gt; unionKey;</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-2-实现连接的提供，datasourse资源文件的映射"><a href="#2-2-实现连接的提供，datasourse资源文件的映射" class="headerlink" title="2.2 实现连接的提供，datasourse资源文件的映射"></a>2.2 实现连接的提供，datasourse资源文件的映射</h2><p>从前面的架构来说，连接的提供以及资源文件的映射都在DBManager中处理，因为资源文件映射只需要一次即可，所以放在static中（只会加载一次），并且向外提供了获取连接的静态方法，以及Configuration静态方法，方便外界的操作！<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.gxm.sorm.core;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.gxm.sorm.bean.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.DriverManager;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/5/15</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 根据配置信息，维持连接对象的管理（增加连接词功能）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DBManager</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Configuration configuration = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Properties properties = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DBManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将数据加载到Configuration类中</span></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            properties = <span class="keyword">new</span> Properties();</span><br><span class="line">            configuration = <span class="keyword">new</span> Configuration();</span><br><span class="line">            properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(<span class="string">"db.properties"</span>));</span><br><span class="line"></span><br><span class="line">            configuration.setDriver(properties.getProperty(<span class="string">"driver"</span>));</span><br><span class="line">            configuration.setUrl(properties.getProperty(<span class="string">"url"</span>));</span><br><span class="line">            configuration.setUsername(properties.getProperty(<span class="string">"username"</span>));</span><br><span class="line">            configuration.setPassword(properties.getProperty(<span class="string">"password"</span>));</span><br><span class="line">            configuration.setSrcPath(properties.getProperty(<span class="string">"srcPath"</span>));</span><br><span class="line">            configuration.setPojoPackage(properties.getProperty(<span class="string">"pojoPackage"</span>));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 提供connection</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title">getConnection</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class.forName(configuration.getDriver());</span><br><span class="line">            Connection connection = DriverManager.getConnection(configuration.getUrl(),</span><br><span class="line">                    configuration.getUsername(), configuration.getPassword());</span><br><span class="line">            <span class="keyword">return</span> connection;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 返回db.properties对应的bean</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Configuration <span class="title">getConfiguration</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> configuration;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-3-根据数据库的表结构生成对应的pojo"><a href="#2-3-根据数据库的表结构生成对应的pojo" class="headerlink" title="2.3 根据数据库的表结构生成对应的pojo"></a>2.3 根据数据库的表结构生成对应的pojo</h2><p>这部分知识需要用到数据库的元数据，不理解的请参考：<a href="https://blog.csdn.net/chen_zw/article/details/18816599" target="_blank" rel="noopener">JDBC元数据操作（一）– DatabaseMetaData接口详解</a></p>
+<p>这部分我们需要在tableContext类中完成,如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.gxm.sorm.core;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.gxm.sorm.bean.ColumnInfo;</span><br><span class="line"><span class="keyword">import</span> cn.gxm.sorm.bean.Configuration;</span><br><span class="line"><span class="keyword">import</span> cn.gxm.sorm.bean.TableInfo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.*;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/5/15</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 管理数据库中的所有表和java中的对象的关系</span></span><br><span class="line"><span class="comment"> * 可以根据表生成java对象</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TableContext</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 对应数据库中所有的表</span></span><br><span class="line"><span class="comment">     * key 为表的名称， value为表对应的bean</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Map&lt;String, TableInfo&gt; allTables = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">TableContext</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取数据库中的所有表以及相关字段，并生成对应的pojo</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        Connection connection = DBManager.getConnection();</span><br><span class="line">        ResultSet rs = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 根据metaData就可以获取到数据库的源信息(表，字段等等)</span></span><br><span class="line">            <span class="comment">// 具体请查看 https://blog.csdn.net/chen_zw/article/details/18816599</span></span><br><span class="line">            DatabaseMetaData metaData = connection.getMetaData();</span><br><span class="line"></span><br><span class="line">            <span class="comment">//处理表</span></span><br><span class="line">            rs = metaData.getTables(<span class="keyword">null</span>, <span class="string">"%"</span>, <span class="string">"%"</span>, <span class="keyword">new</span> String[]&#123; <span class="string">"TABLE"</span> &#125;);</span><br><span class="line">            <span class="keyword">while</span> (rs.next()) &#123;</span><br><span class="line">                TableInfo tableInfo = <span class="keyword">new</span> TableInfo();</span><br><span class="line">                String tableName = rs.getString(<span class="string">"TABLE_NAME"</span>);</span><br><span class="line">                tableInfo.setName(tableName);</span><br><span class="line"></span><br><span class="line">                <span class="comment">//处理一个表中的所有列</span></span><br><span class="line">                ResultSet set = metaData.getColumns(<span class="keyword">null</span>, <span class="string">"%"</span>, tableName, <span class="string">"%"</span>);</span><br><span class="line">                Map&lt;String, ColumnInfo&gt; columnInfoMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">                <span class="keyword">while</span> (set.next())&#123;</span><br><span class="line">                    ColumnInfo columnInfo = <span class="keyword">new</span> ColumnInfo(set.getString(<span class="string">"COLUMN_NAME"</span>),</span><br><span class="line">                            set.getString(<span class="string">"TYPE_NAME"</span>),<span class="number">1</span>);</span><br><span class="line">                    columnInfoMap.put(columnInfo.getName(),columnInfo);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//处理表中的主键，跟新字段的键类型</span></span><br><span class="line">                List&lt;ColumnInfo&gt; columnInfoList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                ResultSet primaryKeys = metaData.getPrimaryKeys(<span class="keyword">null</span>, <span class="string">"%"</span>, tableName);</span><br><span class="line">                <span class="keyword">while</span> (primaryKeys.next())&#123;</span><br><span class="line">                    ColumnInfo columnInfo = columnInfoMap.get(primaryKeys.getObject(<span class="string">"COLUMN_NAME"</span>));</span><br><span class="line">                    columnInfo.setKeyType(<span class="number">2</span>);</span><br><span class="line">                    columnInfoMap.put((String)primaryKeys.getObject(<span class="string">"COLUMN_NAME"</span>),columnInfo);</span><br><span class="line">                    columnInfoList.add(columnInfo);</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">if</span>(columnInfoList.size() == <span class="number">1</span>)&#123;</span><br><span class="line">                        tableInfo.setOnlyPriKey(columnInfo);</span><br><span class="line">                    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                        <span class="comment">// 说明为联合主键</span></span><br><span class="line">                        tableInfo.setUnionKey(columnInfoList);</span><br><span class="line">                        tableInfo.setOnlyPriKey(<span class="keyword">null</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                tableInfo.setColumns(columnInfoMap);</span><br><span class="line">                allTables.put(tableName,tableInfo);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 对外提供获取数据库表信息的方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String, TableInfo&gt; <span class="title">getAllTables</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> allTables;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在这里对该类做一个测试，数据库的两张表结构如下<br><strong>company</strong><br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`company`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  <span class="string">`name`</span> <span class="built_in">varchar</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`address`</span> <span class="built_in">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>,<span class="string">`name`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</span><br></pre></td></tr></table></figure></p>
+<p><strong>emp</strong><br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`emp`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  <span class="string">`name`</span> <span class="built_in">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`age`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</span><br></pre></td></tr></table></figure></p>
+<p>测试代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(TableContext.getAllTables());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>结果：(这样可能不舒服，推荐大家debug一下，在debug中看的更明显)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;emp=TableInfo&#123;name=<span class="string">'emp'</span>, columns=&#123;name=ColumnInfo&#123;name=<span class="string">'name'</span>, dataType=<span class="string">'VARCHAR'</span>, keyType=<span class="number">1</span>&#125;, id=ColumnInfo&#123;name=<span class="string">'id'</span>, dataType=<span class="string">'INT'</span>, keyType=<span class="number">2</span>&#125;, age=ColumnInfo&#123;name=<span class="string">'age'</span>, dataType=<span class="string">'INT'</span>, keyType=<span class="number">1</span>&#125;&#125;, onlyPriKey=ColumnInfo&#123;name=<span class="string">'id'</span>, dataType=<span class="string">'INT'</span>, keyType=<span class="number">2</span>&#125;, unionKey=<span class="keyword">null</span>&#125;, company=TableInfo&#123;name=<span class="string">'company'</span>, columns=&#123;address=ColumnInfo&#123;name=<span class="string">'address'</span>, dataType=<span class="string">'VARCHAR'</span>, keyType=<span class="number">1</span>&#125;, name=ColumnInfo&#123;name=<span class="string">'name'</span>, dataType=<span class="string">'VARCHAR'</span>, keyType=<span class="number">2</span>&#125;, id=ColumnInfo&#123;name=<span class="string">'id'</span>, dataType=<span class="string">'INT'</span>, keyType=<span class="number">2</span>&#125;&#125;, onlyPriKey=<span class="keyword">null</span>, unionKey=[ColumnInfo&#123;name=<span class="string">'id'</span>, dataType=<span class="string">'INT'</span>, keyType=<span class="number">2</span>&#125;, ColumnInfo&#123;name=<span class="string">'name'</span>, dataType=<span class="string">'VARCHAR'</span>, keyType=<span class="number">2</span>&#125;]&#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-4-完成Mysql字段类型与java数据类型的转换"><a href="#2-4-完成Mysql字段类型与java数据类型的转换" class="headerlink" title="2.4 完成Mysql字段类型与java数据类型的转换"></a>2.4 完成Mysql字段类型与java数据类型的转换</h2><p>因为这里主要使用mysql所以就写这一部分即可，而且这里并不做所有数据的转化!</p>
+<h3 id="2-4-1-封装mysql字段类型"><a href="#2-4-1-封装mysql字段类型" class="headerlink" title="2.4.1 封装mysql字段类型"></a>2.4.1 封装mysql字段类型</h3><p>这样，方便以后的使用，与扩展<br><strong>类MysqlType:</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.gxm.sorm.core;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/5/16</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MySqlType</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * mysql的varchar类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String VARCHAR = <span class="string">"varchar"</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * mysql的bigint类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String BIGINT = <span class="string">"bigint"</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * mysql的int类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String INT = <span class="string">"int"</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * mysql的integer类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String INTEGER = <span class="string">"integer"</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * mysql的date类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DATE = <span class="string">"date"</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * mysql的time类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String TIME = <span class="string">"time"</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * mysql的double类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DOUBLE = <span class="string">"double"</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * mysql的float类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String FLOAT = <span class="string">"float"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-4-2-实现具体的mysql字段类型与java类型转化"><a href="#2-4-2-实现具体的mysql字段类型与java类型转化" class="headerlink" title="2.4.2 实现具体的mysql字段类型与java类型转化"></a>2.4.2 实现具体的mysql字段类型与java类型转化</h3><p>写一个类MySqlTypeConvertor继承TypeConvertor<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.gxm.sorm.core;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/5/16</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 实现mysql数据库与java数据类型的转换</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MySqlTypeConvertor</span> <span class="keyword">implements</span> <span class="title">TypeConvertor</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 暂时不实现</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> javaType java数据类型</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">javaType2DBType</span><span class="params">(String javaType)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 现mysql数据库到java数据类型的转换</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> columnType 数据库类型</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 与之对应的Java类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">DBType2javaType</span><span class="params">(String columnType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(MySqlType.VARCHAR.equalsIgnoreCase(columnType))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"String"</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(MySqlType.INT.equalsIgnoreCase(columnType)</span><br><span class="line">                || MySqlType.BIGINT.equalsIgnoreCase(columnType)</span><br><span class="line">                || MySqlType.INTEGER.equalsIgnoreCase(columnType))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"Integer"</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(MySqlType.DATE.equalsIgnoreCase(columnType)</span><br><span class="line">                || MySqlType.TIME.equalsIgnoreCase(columnType))&#123;</span><br><span class="line">            <span class="comment">// 注意这里转为java.sql.Date而不是java.util.date</span></span><br><span class="line">            <span class="comment">// 如果直接转换为utils.date，则需要具体的实现，用到时，我们再转化即可</span></span><br><span class="line">            <span class="keyword">return</span> <span class="string">"java.sql.Date"</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(MySqlType.DOUBLE.equalsIgnoreCase(columnType))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"Double"</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(MySqlType.FLOAT.equalsIgnoreCase(columnType))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"Float"</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 这里不全部转化</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="三、完成javaFileUtils"><a href="#三、完成javaFileUtils" class="headerlink" title="三、完成javaFileUtils"></a>三、完成javaFileUtils</h1><p>上一部分我们已经做到了，可以根据数据库的表获取其中的元数据了，接下就是根据元数据完成pojo，说白了，就是拼接字符串，并生成文件</p>
+<h2 id="3-1-为完成javaFileUtils做出必要的准备"><a href="#3-1-为完成javaFileUtils做出必要的准备" class="headerlink" title="3.1 为完成javaFileUtils做出必要的准备"></a>3.1 为完成javaFileUtils做出必要的准备</h2><h3 id="3-1-1-为更好的解耦，我们抽取公用的方法放到工具类中"><a href="#3-1-1-为更好的解耦，我们抽取公用的方法放到工具类中" class="headerlink" title="3.1.1 为更好的解耦，我们抽取公用的方法放到工具类中"></a>3.1.1 为更好的解耦，我们抽取公用的方法放到工具类中</h3><p><strong>StringUtils:</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 将字符串的首字母大写</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> src</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">toUpperCaseHeadChar</span><span class="params">(String src)</span></span>&#123;</span><br><span class="line">       <span class="keyword">return</span> src.toUpperCase().substring(<span class="number">0</span>,<span class="number">1</span>)+src.substring(<span class="number">1</span>);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-1-2-设计一个属性的字段-与set，get方法"><a href="#3-1-2-设计一个属性的字段-与set，get方法" class="headerlink" title="3.1.2 设计一个属性的字段,与set，get方法"></a>3.1.2 设计一个属性的字段,与set，get方法</h3><p><strong>JavaFieldSetGet (set，get方法省略)</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.gxm.sorm.bean;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/5/17</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 每一个pojo都有的java属性，set,get等等</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JavaFieldSetGet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 例如  (private String id)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String fieldInfo;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 例如</span></span><br><span class="line"><span class="comment">     * public String getId()&#123;</span></span><br><span class="line"><span class="comment">     *     return id;</span></span><br><span class="line"><span class="comment">     * &#125;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String fieldGetInfo;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 例如</span></span><br><span class="line"><span class="comment">     * public void setId(String id)&#123;</span></span><br><span class="line"><span class="comment">     *     this.id = id;</span></span><br><span class="line"><span class="comment">     * &#125;</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String fieldSetInfo;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> fieldInfo+fieldGetInfo+fieldSetInfo;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="3-2-java的file生成我们在javaFileUtils工具类里面完成，其主要方法如下"><a href="#3-2-java的file生成我们在javaFileUtils工具类里面完成，其主要方法如下" class="headerlink" title="3.2 java的file生成我们在javaFileUtils工具类里面完成，其主要方法如下"></a>3.2 java的file生成我们在javaFileUtils工具类里面完成，其主要方法如下</h2><ul>
+<li><p>generateJavaFieldSetGet <strong>每一个pojo都有属性和set，get方法，我们生成说白了就是字符串</strong><br>该方法 测试结果如图：<img src="https://img-blog.csdnimg.cn/20190517155101157.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="generateJavaFieldSetGet 方法测试结果说明"></p>
+</li>
+<li><p>generateJavaSrc <strong>根据上面的方法我们可以完成一个属性的字符串所有功能，所以我们这里再将表的数据也拼接成字符串，合并最总变为一个java的pojo（只不过是字符串）</strong><br>该方法 测试结果如图：<br><img src="https://img-blog.csdnimg.cn/20190517155419102.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="generateJavaSrc 方法测试结果说明"></p>
+</li>
+<li><p>generatePOJOFile <strong>对外提供方法生成pojo文件</strong></p>
+</li>
+</ul>
+<p>其代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/5/15</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 操作文件（暂时先将columnInfo转为对应的java代码）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JavaFileUtils</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据传入的数据库字段信息生成java的bean代码</span></span><br><span class="line"><span class="comment">     * varchar id -&gt; private String id 以及相应set与get方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> columnInfo 数据库字段信息</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> typeConvertor 对应的数据库字段数据类型转换</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 一个属性的bean代码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> JavaFieldSetGet <span class="title">generateJavaFieldSetGet</span><span class="params">(@NotNull ColumnInfo columnInfo,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                          @NotNull TypeConvertor typeConvertor)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(columnInfo==<span class="keyword">null</span> || typeConvertor == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> SormException(<span class="string">"ColumnInfo or TypeConvertor is null"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        JavaFieldSetGet fieldSetGet = <span class="keyword">new</span> JavaFieldSetGet();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 字段名称 id</span></span><br><span class="line">        String columnName = columnInfo.getName();</span><br><span class="line">        String javaFieldType = typeConvertor.DBType2javaType(columnInfo.getDataType());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//private String id</span></span><br><span class="line">        String fieldInfo = <span class="string">"\tprivate "</span>+ javaFieldType +<span class="string">" "</span>+ columnName +<span class="string">";\n"</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * public void getId()&#123;</span></span><br><span class="line"><span class="comment">         *      return id;</span></span><br><span class="line"><span class="comment">         * &#125;</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        StringBuilder fieldGetInfo = <span class="keyword">new</span> StringBuilder(<span class="string">"\tpublic  "</span>+javaFieldType+<span class="string">" get"</span>+StringUtils.toUpperCaseHeadChar(columnName)+<span class="string">" ()&#123;\n"</span>);</span><br><span class="line">        fieldGetInfo.append(<span class="string">"\t\treturn "</span>+ columnName+<span class="string">";\n"</span>);</span><br><span class="line">        fieldGetInfo.append(<span class="string">"\t&#125;\n"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * public void setId(String id)&#123;</span></span><br><span class="line"><span class="comment">         *      this.id = id;</span></span><br><span class="line"><span class="comment">         * &#125;</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        StringBuilder fieldSetInfo = <span class="keyword">new</span> StringBuilder(<span class="string">"\tpublic void set"</span>+StringUtils.toUpperCaseHeadChar(columnName)+<span class="string">" ("</span>+javaFieldType+<span class="string">" "</span>+columnName+<span class="string">")&#123;\n"</span>);</span><br><span class="line">        fieldSetInfo.append(<span class="string">"\t\tthis."</span>+columnName+<span class="string">"="</span>+ columnName+<span class="string">";\n"</span>);</span><br><span class="line">        fieldSetInfo.append(<span class="string">"\t&#125;\n"</span>);</span><br><span class="line"></span><br><span class="line">        fieldSetGet.setFieldInfo(fieldInfo);</span><br><span class="line">        fieldSetGet.setFieldGetInfo(fieldGetInfo.toString());</span><br><span class="line">        fieldSetGet.setFieldSetInfo(fieldSetInfo.toString());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> fieldSetGet;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据表结构生成对应的pojo</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> tableInfo 表信息</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> typeConvertor java与数据库字段类型转化器</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> author 生成的Pojo的作者</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> pojo字符串</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">generateJavaSrc</span><span class="params">(@NotNull TableInfo tableInfo,</span></span></span><br><span class="line"><span class="function"><span class="params">                                         @NotNull TypeConvertor typeConvertor,String author)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>(tableInfo==<span class="keyword">null</span> || typeConvertor == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> SormException(<span class="string">"tableInfo or TypeConvertor is null"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        StringBuilder javaResourse = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        <span class="comment">// 生成package 例如 package cn.gxm.sorm.pojo</span></span><br><span class="line">        javaResourse.append(<span class="string">"package "</span>+ DBManager.getConfiguration().getPojoPackage()+<span class="string">";\n\n"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 生成import 例如 import java.sql.Date</span></span><br><span class="line">        javaResourse.append(<span class="string">"import java.sql.*;\n"</span>);</span><br><span class="line">        javaResourse.append(<span class="string">"import java.lang.*;\n"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 生成autor 以及日期等java文件说明</span></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment">         * <span class="doctag">@date</span> 2019/5/17</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        javaResourse.append(<span class="string">"/**\n"</span>)</span><br><span class="line">                .append(<span class="string">" * @author "</span>+author+<span class="string">"\n"</span>)</span><br><span class="line">                .append(<span class="string">" * @date "</span>+<span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy/MM/dd"</span>).format(<span class="keyword">new</span> Date())+<span class="string">"\n"</span>)</span><br><span class="line">                .append(<span class="string">" */\n"</span>);</span><br><span class="line">        <span class="comment">// 生成类的开始 例如 public class Emp &#123;</span></span><br><span class="line">        javaResourse.append(<span class="string">"public class "</span>+StringUtils.toUpperCaseHeadChar(tableInfo.getName())+<span class="string">"&#123;\n"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 生成类的属性</span></span><br><span class="line">        Set&lt;Map.Entry&lt;String, ColumnInfo&gt;&gt; entries = tableInfo.getColumns().entrySet();</span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;String, ColumnInfo&gt; entry: entries)&#123;</span><br><span class="line">            JavaFieldSetGet fieldSetGet = generateJavaFieldSetGet(entry.getValue(), typeConvertor);</span><br><span class="line">            javaResourse.append(fieldSetGet+<span class="string">"\n"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 生成类的结束  &#125;</span></span><br><span class="line">        javaResourse.append(<span class="string">"&#125;"</span>);</span><br><span class="line">        <span class="keyword">return</span> javaResourse.toString();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 生成与数据库字段匹配的java的pojo</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> tableInfo 表信息</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> typeConvertor java与数据库字段类型转化器</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> author 生成的Pojo的作者</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">generatePOJOFile</span><span class="params">(TableInfo tableInfo,TypeConvertor typeConvertor,String author)</span></span>&#123;</span><br><span class="line">        String javaSrc = generateJavaSrc(tableInfo, typeConvertor, author);</span><br><span class="line">        String dirPath = DBManager.getConfiguration().getSrcPath()+<span class="string">"//"</span>+DBManager.getConfiguration().getPojoPackage().replaceAll(<span class="string">"\\."</span>,<span class="string">"//"</span>);</span><br><span class="line">        File pojoDir = <span class="keyword">new</span> File(dirPath);</span><br><span class="line">        <span class="comment">//包不存在则创建包</span></span><br><span class="line">        <span class="keyword">if</span>(!pojoDir.exists())&#123;</span><br><span class="line">            pojoDir.mkdirs();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Writer writer = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            writer = <span class="keyword">new</span> FileWriter(pojoDir.getAbsoluteFile()+<span class="string">"//"</span>+StringUtils.toUpperCaseHeadChar(tableInfo.getName())+<span class="string">".java"</span>);</span><br><span class="line">            writer.write(javaSrc);</span><br><span class="line">            writer.flush();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                writer.close();</span><br><span class="line">                System.out.println(<span class="string">"pojo创建成功!!"</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="四、完善TableContext"><a href="#四、完善TableContext" class="headerlink" title="四、完善TableContext"></a>四、完善TableContext</h1><p>我们已经在TableContext类中获取了所有的数据库源信息（<strong>第一部分与第二部分</strong>），而在<strong>第三部分</strong>我们也完成了根据tableInfo来生成pojo的（.java文件)，但是JavaFileUtils总归是一个工具类，我们将在TableContext对外提供生成的方法，即在TableContext类中添加方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 生成或者跟新java的pojo与数据库的对应关系</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">generateOrUpdateJavaFilePojo</span><span class="params">()</span></span>&#123;</span><br><span class="line">       Set&lt;Map.Entry&lt;String, TableInfo&gt;&gt; entries = allTables.entrySet();</span><br><span class="line">       <span class="keyword">for</span> (Map.Entry&lt;String, TableInfo&gt; entry: entries)&#123;</span><br><span class="line">           JavaFileUtils.generatePOJOFile(entry.getValue(),<span class="keyword">new</span> MySqlTypeConvertor(),<span class="string">"GXM www.guokangjie.cn"</span>);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>测试<br>配置正确的db.properties，就会在指定位置生成与数据库对应的pojo，如下图<br><img src="https://img-blog.csdnimg.cn/20190517161339443.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="pojo文件生成测试"></p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">希望对您有所帮助</span>
+      <div class="donation-body">
+        <div class="tip text-center">May all the ordinary are great, all the ignoble bloom</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>smile</span>
+            
+            <img src="/images/temp/1.jpeg" alt>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/05/19/写出你自己的ORM框架（二/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '277317290454635afa73',
+  clientSecret: '78223c859304da5e8d71bfce136d436c6ff95c37',
+  repo: 'blog-comment',
+  owner: 'forsigner',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: location.pathname,
+  admin: ['forsigner'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

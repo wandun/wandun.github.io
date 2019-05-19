@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>&#39;写出你自己的ORM框架（三) &#39; | Gxm</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="自己的ORM框架,java,">
+  
+
+  <meta name="description" content="代码地址 写出你自己的ORM框架（一） 写出你自己的ORM框架（二） 写出你自己的ORM框架（三） 写出你自己的ORM框架（四）一、本篇主要完成查询功能 多行多列 List&amp;lt; javaBean &amp;gt; 一行多列 javaBean 一行一列 普通对象 object 数值 Number (select count(*) from emp )二、完成queryRows，多行多列查询其实这里完成">
+<meta name="keywords" content="自己的ORM框架,java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&#39;写出你自己的ORM框架（三) &#39;">
+<meta property="og:url" content="http://guokangjie.cn/2019/05/19/写出你自己的ORM框架（三）/index.html">
+<meta property="og:site_name" content="Gxm">
+<meta property="og:description" content="代码地址 写出你自己的ORM框架（一） 写出你自己的ORM框架（二） 写出你自己的ORM框架（三） 写出你自己的ORM框架（四）一、本篇主要完成查询功能 多行多列 List&amp;lt; javaBean &amp;gt; 一行多列 javaBean 一行一列 普通对象 object 数值 Number (select count(*) from emp )二、完成queryRows，多行多列查询其实这里完成">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-19T09:01:22.882Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="&#39;写出你自己的ORM框架（三) &#39;">
+<meta name="twitter:description" content="代码地址 写出你自己的ORM框架（一） 写出你自己的ORM框架（二） 写出你自己的ORM框架（三） 写出你自己的ORM框架（四）一、本篇主要完成查询功能 多行多列 List&amp;lt; javaBean &amp;gt; 一行多列 javaBean 一行一列 普通对象 object 数值 Number (select count(*) from emp )二、完成queryRows，多行多列查询其实这里完成">
+
+  
+
+  
+    <link rel="icon" href="/images/avatar.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、本篇主要完成查询功能"><span class="toc-text">一、本篇主要完成查询功能</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、完成queryRows，多行多列查询"><span class="toc-text">二、完成queryRows，多行多列查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-多表联查"><span class="toc-text">2.1 多表联查</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三、查询一行多列"><span class="toc-text">三、查询一行多列</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#四、一行一列"><span class="toc-text">四、一行一列</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#五、完善代码的小优化"><span class="toc-text">五、完善代码的小优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1-优化代码的重用性"><span class="toc-text">5.1 优化代码的重用性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2-优化查询的代码重用性"><span class="toc-text">5.2 优化查询的代码重用性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-3-优化连接池"><span class="toc-text">5.3 优化连接池</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-写出你自己的ORM框架（三）" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">&#39;写出你自己的ORM框架（三) &#39;</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.05.19</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>GuoKangJie</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/自己的ORM框架/">自己的ORM框架</a> / <a class="article-category-link" href="/categories/自己的ORM框架/java/">java</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <ul>
+<li><a href="https://github.com/wandun/ORM" target="_blank" rel="noopener">代码地址</a><ul>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90239643" target="_blank" rel="noopener">写出你自己的ORM框架（一）</a></li>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90295130" target="_blank" rel="noopener">写出你自己的ORM框架（二）</a></li>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90318186" target="_blank" rel="noopener">写出你自己的ORM框架（三）</a></li>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90295861" target="_blank" rel="noopener">写出你自己的ORM框架（四）</a><h1 id="一、本篇主要完成查询功能"><a href="#一、本篇主要完成查询功能" class="headerlink" title="一、本篇主要完成查询功能"></a>一、本篇主要完成查询功能</h1></li>
+<li>多行多列 List&lt; javaBean &gt;</li>
+<li>一行多列 javaBean</li>
+<li>一行一列</li>
+<li>普通对象 object</li>
+<li>数值 Number (select count(*) from emp )<h1 id="二、完成queryRows，多行多列查询"><a href="#二、完成queryRows，多行多列查询" class="headerlink" title="二、完成queryRows，多行多列查询"></a>二、完成queryRows，多行多列查询</h1>其实这里完成的很Low，这里为了方便，将sql语句交给用户完成,<br>测试代码如下：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List queryRows = mysqlQuery.queryRows(<span class="string">"select empName,age from emp where age&gt;? and age&lt;?"</span>,</span><br><span class="line">               Emp.class, <span class="keyword">new</span> String[]&#123;<span class="string">"21"</span>, <span class="string">"30"</span>&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>其中需要明白一点，就原始数据的类型即使扩大范围了，但是得到class还是原始的类型，如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String s = <span class="string">"hjh"</span>;</span><br><span class="line">        Object s1 =s;</span><br><span class="line">        System.out.println(s1.getClass()); <span class="comment">//java.lang.String</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>queryRows代码如下，这里需要用到<strong>查询结果数据库的元数据</strong>通过<strong>java.sql.ResultSet.getMetaData()</strong>,\<br>之前获取表结构是通过<strong>connection.getMetaData()</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> List <span class="title">queryRows</span><span class="params">(String sql, Class clazz, String[] params)</span> </span>&#123;</span><br><span class="line">       PreparedStatement preparedStatement = <span class="keyword">null</span>;</span><br><span class="line">       ResultSet resultSet =<span class="keyword">null</span>;</span><br><span class="line">       Connection connection = DBManager.getConnection();</span><br><span class="line">       <span class="comment">// 将查询到的结果分装到List&lt;JavaBean&gt;中</span></span><br><span class="line">       List result = <span class="keyword">new</span> ArrayList();</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           <span class="comment">//sql =&gt;&gt;&gt; select empName,age from emp where age&gt;? and age&lt;?</span></span><br><span class="line">           preparedStatement  = connection.prepareStatement(sql);</span><br><span class="line">           <span class="comment">// select empName,age from emp where age&gt;20 and age&lt;30</span></span><br><span class="line">           JDBCUtils.handleParams(preparedStatement,params);</span><br><span class="line">           resultSet = preparedStatement.executeQuery();</span><br><span class="line">           <span class="comment">//得到查询结果的数据库元数据</span></span><br><span class="line">           ResultSetMetaData metaData = resultSet.getMetaData();</span><br><span class="line">           <span class="keyword">while</span> (resultSet.next())&#123;</span><br><span class="line">               Object newInstance = clazz.newInstance();</span><br><span class="line">               <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;metaData.getColumnCount();i++)&#123;</span><br><span class="line">                   <span class="comment">//得到查询结果列的标签也就是列名  如 empName,age 下表从一开始</span></span><br><span class="line">                   String columnLabel = metaData.getColumnLabel(i + <span class="number">1</span>);</span><br><span class="line">                   <span class="comment">//得到查询结果列的指定column的值  如 empName='小米' 下表从一开始</span></span><br><span class="line">                   Object columnValue = resultSet.getObject(i + <span class="number">1</span>);</span><br><span class="line">                   <span class="comment">//通过反射调用该方法的指定属性的set方法将其赋值  如果返回值 empName='小米' 那么columnValue.getClass() 就是java.lang.string</span></span><br><span class="line">                   ReflectUtils.setMethodResult(newInstance,columnLabel,columnValue.getClass(),columnValue);</span><br><span class="line">               &#125;</span><br><span class="line">               <span class="comment">//一个对象完成，将其加入result集合中去</span></span><br><span class="line">               result.add(newInstance);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">           e.printStackTrace();</span><br><span class="line">       &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">           JDBCUtils.close(preparedStatement,resultSet,connection);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> result;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="2-1-多表联查"><a href="#2-1-多表联查" class="headerlink" title="2.1 多表联查"></a>2.1 多表联查</h2><p>因为我们将sql语句的书写功能交给了使用者，而且我们只是根据数据库的查询结果分装成java对象，所以，只要查询数据库得到的字段在java中有对应的pojo，我们都可以完成，查询的分装<br>测试<br>两表查询，先建立两表查询结果的java对象,如下(set与get方法省略)<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.gxm.sorm.vo;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/5/18</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmpToDept</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Integer empId;</span><br><span class="line">    <span class="keyword">private</span> String empName;</span><br><span class="line">    <span class="keyword">private</span> String deptName;</span><br><span class="line">    <span class="keyword">private</span> Integer deptId;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>测试代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String sql = <span class="string">"SELECT e.id empId,e.empName,d.deptName,d.id deptId FROM emp AS e LEFT JOIN dept AS d ON e.deptId = d.id WHERE d.id &gt; ?"</span>;</span><br><span class="line">List queryRows1 = mysqlQuery.queryRows(sql, EmpToDept.class, <span class="keyword">new</span> String[]&#123;<span class="string">"1"</span>&#125;);</span><br><span class="line">System.out.println(queryRows1);</span><br></pre></td></tr></table></figure></p>
+<p>结果：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[EmpToDept&#123;empId=<span class="number">1</span>, empName=<span class="string">'GXM'</span>, deptName=<span class="string">'测试部'</span>, deptId=<span class="number">2</span>&#125;]</span><br></pre></td></tr></table></figure></p>
+<h1 id="三、查询一行多列"><a href="#三、查询一行多列" class="headerlink" title="三、查询一行多列"></a>三、查询一行多列</h1><p>很简单，直接调用前面的多行多列，取第一个即可,代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">queryOne</span><span class="params">(String sql,Class clazz, String[] params)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> queryRows(sql,clazz,params).size()&gt;<span class="number">0</span>?queryRows(sql,clazz,params).get(<span class="number">0</span>):<span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="四、一行一列"><a href="#四、一行一列" class="headerlink" title="四、一行一列"></a>四、一行一列</h1><p>修改前面的多行多列的代码，直接执行取完第一列，第一行数据直接返回，代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Number <span class="title">queryNumber</span><span class="params">(String sql, String[] params)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (Number) queryValue(sql, params);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">queryValue</span><span class="params">(String sql,String[] params)</span> </span>&#123;</span><br><span class="line">        PreparedStatement preparedStatement = <span class="keyword">null</span>;</span><br><span class="line">        ResultSet resultSet =<span class="keyword">null</span>;</span><br><span class="line">        Connection connection = DBManager.getConnection();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//sql =&gt;&gt;&gt; SELECT COUNT(*) FROM emp WHERE deptId&gt;?</span></span><br><span class="line">            preparedStatement  = connection.prepareStatement(sql);</span><br><span class="line">            <span class="comment">// SELECT COUNT(*) FROM emp WHERE deptId&gt;1</span></span><br><span class="line">            JDBCUtils.handleParams(preparedStatement,params);</span><br><span class="line">            resultSet = preparedStatement.executeQuery();</span><br><span class="line">            <span class="comment">//得到查询结果的数据库元数据</span></span><br><span class="line">            ResultSetMetaData metaData = resultSet.getMetaData();</span><br><span class="line">            <span class="keyword">while</span> (resultSet.next())&#123;</span><br><span class="line">               <span class="keyword">return</span> resultSet.getObject(<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            JDBCUtils.close(preparedStatement,resultSet,connection);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="五、完善代码的小优化"><a href="#五、完善代码的小优化" class="headerlink" title="五、完善代码的小优化"></a>五、完善代码的小优化</h1><h2 id="5-1-优化代码的重用性"><a href="#5-1-优化代码的重用性" class="headerlink" title="5.1 优化代码的重用性"></a>5.1 优化代码的重用性</h2><p>对于我么到现在所做的操作跟数据库的类型关系并不大，因为都是基础的CRUD，因此，我们把MysqlQuery中的方法放到父类中去，将父类Query从接口变为抽象类,MysqlQuery继承这个抽象父类Query</p>
+<h2 id="5-2-优化查询的代码重用性"><a href="#5-2-优化查询的代码重用性" class="headerlink" title="5.2 优化查询的代码重用性"></a>5.2 优化查询的代码重用性</h2><ul>
+<li><p>这个优化的就是查询的部分，前面的几种查询，基本模板都是一样的，只是封装的结果集的方式不同，所以我们将结果抽出来，定义为一个接口<strong>CallResultSet</strong>，里面有一个方法<strong>handleResultSet</strong>用于对不同的结果集的处理<br>代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.gxm.sorm.core.query;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.ResultSet;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">CallResultSet</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据需求完成对查询结果的分装</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> resultSet 查询结果集</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> clazz 封装数据的对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> &lt;T&gt;</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    &lt;T&gt; <span class="function">Object <span class="title">handleResultSet</span><span class="params">(ResultSet resultSet, Class&lt;T&gt; clazz)</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>模板集<strong>baseQuery</strong>,代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 基础的查询</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> sql 查询的sql语句</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> params sql语句的参数值</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> callResultSet 查询的结果集处理器</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Nullable</span> <span class="keyword">private</span> &lt;T&gt; <span class="function">Object <span class="title">baseQuery</span><span class="params">(@NotNull  String sql,</span></span></span><br><span class="line"><span class="function"><span class="params">                                 @Nullable String[] params,</span></span></span><br><span class="line"><span class="function"><span class="params">                                 @NotNull  Class&lt;T&gt; clazz,</span></span></span><br><span class="line"><span class="function"><span class="params">                                 @NotNull  CallResultSet callResultSet)</span> </span>&#123;</span><br><span class="line">        PreparedStatement preparedStatement = <span class="keyword">null</span>;</span><br><span class="line">        ResultSet resultSet =<span class="keyword">null</span>;</span><br><span class="line">        Connection connection = DBManager.getConnection();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//sql =&gt;&gt;&gt; SELECT COUNT(*) FROM emp WHERE deptId&gt;?</span></span><br><span class="line">            preparedStatement  = connection.prepareStatement(sql);</span><br><span class="line">            <span class="comment">// SELECT COUNT(*) FROM emp WHERE deptId&gt;1</span></span><br><span class="line">            JDBCUtils.handleParams(preparedStatement,params);</span><br><span class="line">            resultSet = preparedStatement.executeQuery();</span><br><span class="line">            <span class="keyword">return</span> callResultSet.handleResultSet(resultSet,clazz);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            JDBCUtils.close(preparedStatement,resultSet,connection);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>每种查询的处理</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>查询的类型</th>
+<th>继承CallResultSet类的具体实现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>多行多列</td>
+<td>QueryRowsCallResultSet implements CallResultSet</td>
+</tr>
+<tr>
+<td>一行多列</td>
+<td>不用写直接根以前一样调用多行多列的方法即可</td>
+</tr>
+<tr>
+<td>一行一列</td>
+<td>class QueryNumberCallResultSet implements CallResultSet</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-3-优化连接池"><a href="#5-3-优化连接池" class="headerlink" title="5.3 优化连接池"></a>5.3 优化连接池</h2><ul>
+<li>连接池初始化，实现初始化多个连接放在集合中，以供使用</li>
+<li>获取连接，就直接从连接池中获取<ul>
+<li>首先判断当前连接池中连接数量是否够用，不够用就增加连接知道到达最大值</li>
+<li>连接池中获取集合中的最后一个连接</li>
+<li>关闭连接，从连接池中关闭连接<ul>
+<li>连接池判断，如果当前连接池中连接的数量已经超过最大值，就真的关闭连接</li>
+<li>如果没有就将其加入到连接池中</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>连接池代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.gxm.sorm.pool;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.gxm.sorm.core.DBManager;</span><br><span class="line"><span class="keyword">import</span> cn.gxm.sorm.utils.JDBCUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/5/19</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 管理数据库的连接的连接池</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DBConnPool</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 连接池对象</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> List&lt;Connection&gt; pool;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 连接池中连接的最大连接数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Integer maxConnection = DBManager.getConfiguration().getMaxConnection();</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 连接池中连接的最小连接数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Integer minConnection = DBManager.getConfiguration().getMinConnection();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        pool = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">        initPool();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 初始化连接池</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">initPool</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;maxConnection;i++)&#123;</span><br><span class="line">            pool.add(DBManager.createConnection());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 从连接词中获取连接</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Connection <span class="title">poolCreateConnection</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">// 连接池中的连接数量已经小于最低值,需要增加connection</span></span><br><span class="line">        <span class="keyword">while</span> (pool.size()&lt;minConnection)&#123;</span><br><span class="line">            pool.add(DBManager.createConnection());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Connection connection = pool.get(pool.size()-<span class="number">1</span>);</span><br><span class="line">        <span class="comment">//从连接池中关闭</span></span><br><span class="line">        pool.remove(connection);</span><br><span class="line">        <span class="keyword">return</span> connection;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 从连接池中关闭连接</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> connection</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">poolCloseConnection</span><span class="params">(Connection connection)</span></span>&#123;</span><br><span class="line">        <span class="comment">// 连接池中的连接已经超过最大值，就真的关闭连接</span></span><br><span class="line">        <span class="keyword">if</span>(pool.size()&gt;maxConnection)&#123;</span><br><span class="line">            JDBCUtils.close(<span class="keyword">null</span>,<span class="keyword">null</span>,connection);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        pool.add(connection);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>那么DBManager中的连接部分代码就可以这样写</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 从连接池中获取connection，向外提供connection</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title">getConnection</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> DBConnPool.poolCreateConnection();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建真正的连接</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title">createConnection</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Class.forName(configuration.getDriver());</span><br><span class="line">            <span class="keyword">return</span> DriverManager.getConnection(configuration.getUrl(),</span><br><span class="line">                    configuration.getUsername(), configuration.getPassword());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 从连接池中关闭连接</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">closeConnection</span><span class="params">(Connection connection)</span></span>&#123;</span><br><span class="line">        DBConnPool.poolCloseConnection(connection);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">希望对您有所帮助</span>
+      <div class="donation-body">
+        <div class="tip text-center">May all the ordinary are great, all the ignoble bloom</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>smile</span>
+            
+            <img src="/images/temp/1.jpeg" alt>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/05/19/写出你自己的ORM框架（四 ) /">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/2019/05/19/写出你自己的ORM框架（二/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '277317290454635afa73',
+  clientSecret: '78223c859304da5e8d71bfce136d436c6ff95c37',
+  repo: 'blog-comment',
+  owner: 'forsigner',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: location.pathname,
+  admin: ['forsigner'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

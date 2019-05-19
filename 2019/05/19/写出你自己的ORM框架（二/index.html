@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>&#39;写出你自己的ORM框架（二) &#39; | Gxm</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="自己的ORM框架,java,">
+  
+
+  <meta name="description" content="代码地址 写出你自己的ORM框架（一） 写出你自己的ORM框架（二） 写出你自己的ORM框架（三） 写出你自己的ORM框架（四）一、完成query接口query是一个接口，是因为每一个数据库的实现方法都不样，所以定义为接口，我们这里就只完成mysql的普通CRUD即可！query接口中的方法如下：12345678910111213141516171819202122232425262728293">
+<meta name="keywords" content="自己的ORM框架,java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&#39;写出你自己的ORM框架（二) &#39;">
+<meta property="og:url" content="http://guokangjie.cn/2019/05/19/写出你自己的ORM框架（二/index.html">
+<meta property="og:site_name" content="Gxm">
+<meta property="og:description" content="代码地址 写出你自己的ORM框架（一） 写出你自己的ORM框架（二） 写出你自己的ORM框架（三） 写出你自己的ORM框架（四）一、完成query接口query是一个接口，是因为每一个数据库的实现方法都不样，所以定义为接口，我们这里就只完成mysql的普通CRUD即可！query接口中的方法如下：12345678910111213141516171819202122232425262728293">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-19T09:01:39.301Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="&#39;写出你自己的ORM框架（二) &#39;">
+<meta name="twitter:description" content="代码地址 写出你自己的ORM框架（一） 写出你自己的ORM框架（二） 写出你自己的ORM框架（三） 写出你自己的ORM框架（四）一、完成query接口query是一个接口，是因为每一个数据库的实现方法都不样，所以定义为接口，我们这里就只完成mysql的普通CRUD即可！query接口中的方法如下：12345678910111213141516171819202122232425262728293">
+
+  
+
+  
+    <link rel="icon" href="/images/avatar.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、完成query接口"><span class="toc-text">一、完成query接口</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二-、完成-executeDML"><span class="toc-text">二 、完成 executeDML</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三-、完成MysqlQuery的删除功能"><span class="toc-text">三 、完成MysqlQuery的删除功能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-定义clazzAllTable"><span class="toc-text">3.1 定义clazzAllTable</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-接下来完成根据主键删除，根据主键删除的有二个重载方法"><span class="toc-text">3.2 接下来完成根据主键删除，根据主键删除的有二个重载方法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#四-、完成增加功能"><span class="toc-text">四 、完成增加功能</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#五-、完成跟新"><span class="toc-text">五 、完成跟新</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#六、测试"><span class="toc-text">六、测试</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-写出你自己的ORM框架（二" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">&#39;写出你自己的ORM框架（二) &#39;</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.05.19</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>GuoKangJie</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/自己的ORM框架/">自己的ORM框架</a> / <a class="article-category-link" href="/categories/自己的ORM框架/java/">java</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <ul>
+<li><a href="https://github.com/wandun/ORM" target="_blank" rel="noopener">代码地址</a></li>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90239643" target="_blank" rel="noopener">写出你自己的ORM框架（一）</a></li>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90295130" target="_blank" rel="noopener">写出你自己的ORM框架（二）</a></li>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90318186" target="_blank" rel="noopener">写出你自己的ORM框架（三）</a></li>
+<li><a href="https://blog.csdn.net/qq_38263083/article/details/90295861" target="_blank" rel="noopener">写出你自己的ORM框架（四）</a><h1 id="一、完成query接口"><a href="#一、完成query接口" class="headerlink" title="一、完成query接口"></a>一、完成query接口</h1>query是一个接口，是因为每一个数据库的实现方法都不样，所以定义为接口，我们这里就只完成mysql的普通CRUD即可！<br>query接口中的方法如下：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.gxm.sorm.core;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.gxm.sorm.bean.TableInfo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.function.Function;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2019/5/15</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 操作数据库的核心接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Query</span>/*&lt;<span class="title">T</span> <span class="keyword">extends</span> <span class="title">TableInfo</span>&gt;*/ </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 直接执行一个sql语句</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> sql 需要执行的sql语句，参数用 ? 代替</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> params sql语句的参数，用于替换 ?</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 执行sql语句影响的行数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">executeDML</span><span class="params">(String sql,Object[] params)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 向数据库中插入一条数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> table 即java中的pojo对应的数据库中的表名称</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(Object table)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据 id 删除数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> clazz 数据库中表对应的java对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> primaryKey 主键</span></span><br><span class="line"><span class="comment">     *  delete from User where id = ?</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">delete</span><span class="params">(Class clazz,Object primaryKey)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据与数据库对应的表的对象来删除</span></span><br><span class="line"><span class="comment">     * 根据主键删除</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> table</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">delete</span><span class="params">(Object table)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 跟新表数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> table 数据库中表对应的java对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> params 跟新的数值</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 影响的条数</span></span><br><span class="line"><span class="comment">     * update User set name='' where id = ''</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">update</span><span class="params">(Object table,String[] params)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 指定查询多条记录，并将记录封装到指定的class对象中</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> sql 需要执行查询的sql语句</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> clazz 查询结果封装的对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> params sql语句的参数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 将封装的class对象变为集合返回</span></span><br><span class="line"><span class="comment">     * select id,name from User where name like ''</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">List <span class="title">queryRows</span><span class="params">(String sql,Class clazz,String[] params)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 指定查询多条记录</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> sql 需要执行查询的sql语句</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> params sql语句的参数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 将封装的class对象返回</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Object <span class="title">queryOne</span><span class="params">(String sql,String[] params)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询数值</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> sql 需要执行查询的sql语句</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> params sql语句的参数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 返回查询的数值</span></span><br><span class="line"><span class="comment">     * select count(*) from User where id = ''</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Number <span class="title">queryNumber</span><span class="params">(String sql,String[] params)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="二-、完成-executeDML"><a href="#二-、完成-executeDML" class="headerlink" title="二 、完成 executeDML"></a>二 、完成 executeDML</h1><p><strong>其中executeDML()为底层的代码，用于执行拼接的sql语句！</strong><br>在这里我们将使用jdbc原始的技术完成sql语句的执行,既然执行原始的jdbc语句那么有一点大家一定知道，关闭的问题，以及异常的捕捉，很烦人，所以我们封装到JDBCUtils中处理。而且处理preparedStatement传参问题也很通用，所以我们也封装成handleParams方法</p>
+<ul>
+<li><p><strong>JDBCUtils中的close方法代码如下：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理jdbc关闭问题</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> preparedStatement PreparedStatement对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> connection    Connection 对象</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">(PreparedStatement preparedStatement,</span></span></span><br><span class="line"><span class="function"><span class="params">                             Connection connection)</span></span>&#123;</span><br><span class="line">        <span class="comment">// 这里关闭的顺序需要注意一下，还有最重要的就是不能放在同一个try代码块里处理</span></span><br><span class="line">        <span class="comment">// 因为一旦前面的关闭错误，后面的会无法关闭</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(preparedStatement!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                preparedStatement.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(connection!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                connection.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>JDBCUtils中的handleParams方法代码如下：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理执行sql式preparedStatement的?传参问题</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> preparedStatement PreparedStatement对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> params 参数值数组对象</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">handleParams</span><span class="params">(PreparedStatement preparedStatement, Object[] params)</span></span>&#123;</span><br><span class="line">        <span class="comment">// 注意PreparedStatement设置下表是从1开始的</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i =<span class="number">0</span>;i&lt;params.length;i++)&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                preparedStatement.setObject(i+<span class="number">1</span>,params[i]);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>完整的executeDML方法就是如下了</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">executeDML</span><span class="params">(String sql, Object[] params)</span> </span>&#123;</span><br><span class="line">       PreparedStatement preparedStatement = <span class="keyword">null</span>;</span><br><span class="line">       Connection connection = DBManager.getConnection();</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           preparedStatement  = connection.prepareStatement(sql);</span><br><span class="line">           JDBCUtils.handleParams(preparedStatement,params);</span><br><span class="line">           <span class="keyword">return</span> preparedStatement.executeUpdate();</span><br><span class="line">       &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">           e.printStackTrace();</span><br><span class="line">       &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">          JDBCUtils.close(preparedStatement,connection);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="三-、完成MysqlQuery的删除功能"><a href="#三-、完成MysqlQuery的删除功能" class="headerlink" title="三 、完成MysqlQuery的删除功能"></a>三 、完成MysqlQuery的删除功能</h1><h2 id="3-1-定义clazzAllTable"><a href="#3-1-定义clazzAllTable" class="headerlink" title="3.1 定义clazzAllTable"></a>3.1 定义clazzAllTable</h2><p>因为我们需要根据表来关联数据库中的表，所以我们之前在<strong>TableContext</strong>类中定义了allTables<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 对应数据库中所有的表</span></span><br><span class="line"><span class="comment">     * key 为表的名称， value为表对应的bean</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Map&lt;String, TableInfo&gt; allTables = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br></pre></td></tr></table></figure></p>
+<p><strong>但是我们根据指定的规则使用名称来找，可能会出现问题</strong>，所以我们这里再定义个Map,根据clazz来找，这下绝对不会出错,定义如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 将生成的pojo用class与数据库中的表关联起来</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> Map&lt;Class ,TableInfo&gt; clazzAllTable = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br></pre></td></tr></table></figure></p>
+<p>填充clazzAllTable其实与allTables差不多，只不过，一个Key是表的名称，一个是表对应的pojo的class对象，实现如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//配置clazzAllTales</span></span><br><span class="line">                Class&lt;?&gt; clazz = Class.forName(DBManager.getConfiguration().getPojoPackage() + <span class="string">"."</span> + StringUtils.toUpperCaseHeadChar(tableName));</span><br><span class="line">                clazzAllTable.put(clazz,tableInfo);</span><br></pre></td></tr></table></figure></p>
+<h2 id="3-2-接下来完成根据主键删除，根据主键删除的有二个重载方法"><a href="#3-2-接下来完成根据主键删除，根据主键删除的有二个重载方法" class="headerlink" title="3.2 接下来完成根据主键删除，根据主键删除的有二个重载方法"></a>3.2 接下来完成根据主键删除，根据主键删除的有二个重载方法</h2><blockquote>
+<p>/**</p>
+<pre><code>* 根据 id 删除数据
+* @param clazz 数据库中表对应的java对象
+* @param primaryKey 主键的值
+*  delete from User where id = ?
+*/
+</code></pre><ul>
+<li>public void delete(Class clazz, Object primaryKey)</li>
+</ul>
+</blockquote>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delete</span><span class="params">(Class clazz, Object primaryKey)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//根据class找到数据库中对应的表（这里不能根据类名来直接得出表名）</span></span><br><span class="line">    <span class="comment">//因为你之后还要获取主键</span></span><br><span class="line">    TableInfo tableInfo = TableContext.getClazzAllTable().get(clazz);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//拼接sql,暂时不处理联合主键</span></span><br><span class="line">    String sql = <span class="string">"delete from "</span>+tableInfo.getName()+<span class="string">" where "</span>+tableInfo.getOnlyPriKey().getName()+<span class="string">" =?"</span>;</span><br><span class="line">    executeDML(sql,<span class="keyword">new</span> Object[]&#123;primaryKey&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>/**</p>
+<pre><code>* 根据与数据库对应的表的对象来删除
+* 根据主键删除 主键值在传入的Object对象中
+* @param table
+*/
+</code></pre><ul>
+<li>public void delete(Object table)<br>这个方法主键的值并没有显式的展示出来，在传入的对象中，但是我们无法直接调用get方法获取，该属性的值，因为传入是object，所以我们可以根据主键的名称拼接该属性的get方法，通过反射调用即可<br>反射方法定义实现如下<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据属性名称调用其get方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> object 该属性属于那个对象</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> fieldName 属性的名称</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 调用该属性的get方法的返回值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getMethodResult</span><span class="params">(Object object,</span></span></span><br><span class="line"><span class="function"><span class="params">                                  String fieldName)</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Method method = object.getClass().getDeclaredMethod(<span class="string">"get"</span> + StringUtils.toUpperCaseHeadChar(fieldName),<span class="keyword">null</span>);</span><br><span class="line">            <span class="keyword">return</span> method.invoke(object, <span class="keyword">null</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<p>完成该方法,代码如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delete</span><span class="params">(Object table)</span> </span>&#123;</span><br><span class="line">        Class&lt;?&gt; clazz = table.getClass();</span><br><span class="line">        <span class="comment">// 获取主键</span></span><br><span class="line">        TableInfo tableInfo = TableContext.getClazzAllTable().get(clazz);</span><br><span class="line">        ColumnInfo onlyPriKey = tableInfo.getOnlyPriKey();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//通过反射的值获取主键的值(这里无法调用table的get方法，因为你不知道具体的对象)</span></span><br><span class="line">        Object methodResult = ReflectUtils.getMethodResult(table, onlyPriKey.getName());</span><br><span class="line">        <span class="comment">//拼接sql,暂时不处理联合主键</span></span><br><span class="line">        String sql = <span class="string">"delete from "</span>+tableInfo.getName()+<span class="string">" where "</span>+onlyPriKey.getName()+<span class="string">" =?"</span>;</span><br><span class="line">        executeDML(sql,<span class="keyword">new</span> Object[]&#123;methodResult&#125;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="四-、完成增加功能"><a href="#四-、完成增加功能" class="headerlink" title="四 、完成增加功能"></a>四 、完成增加功能</h1><p>增加功能就很简单了，拼接好sql语句后，直接交给executeDML方法去执行就可以了<br>代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">(Object table)</span> </span>&#123;</span><br><span class="line">        Class&lt;?&gt; clazz = table.getClass();</span><br><span class="line">        <span class="comment">// 获取该对象的表信息</span></span><br><span class="line">        TableInfo tableInfo = TableContext.getClazzAllTable().get(clazz);</span><br><span class="line">        <span class="comment">//我们这里处理主键是自动增长，且属性值为空我们不传入</span></span><br><span class="line">        <span class="comment">//TODO 处理主键不是自增</span></span><br><span class="line">        <span class="comment">//insert into emp(name,age,salary,birthday,deptId) values(?,?,?,?,?)</span></span><br><span class="line">        StringBuilder sql = <span class="keyword">new</span> StringBuilder(<span class="string">"insert into "</span>+tableInfo.getName()+<span class="string">"("</span>);</span><br><span class="line">        Field[] fields = clazz.getDeclaredFields();</span><br><span class="line">        <span class="keyword">int</span> fieldValueNotNullCount = <span class="number">0</span>;</span><br><span class="line">        List&lt;Object&gt; fieldValues = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (Field field:fields)&#123;</span><br><span class="line">            Object methodResult = ReflectUtils.getMethodResult(table, field.getName());</span><br><span class="line">            <span class="keyword">if</span>(methodResult!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                fieldValueNotNullCount++;</span><br><span class="line">                fieldValues.add(methodResult);</span><br><span class="line">                sql.append(field.getName()+<span class="string">","</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//去掉多余的 , 变为 )</span></span><br><span class="line">        sql.replace(sql.lastIndexOf(<span class="string">","</span>),sql.length(),<span class="string">") "</span>);</span><br><span class="line">        <span class="comment">// 拼接 ?</span></span><br><span class="line">        sql.append(<span class="string">"values("</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i =<span class="number">0</span>;i&lt;fieldValueNotNullCount;i++)&#123;</span><br><span class="line">            sql.append(<span class="string">"?,"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//去掉多余的 , 变为 )</span></span><br><span class="line">        sql.replace(sql.lastIndexOf(<span class="string">","</span>),sql.length(),<span class="string">") "</span>);</span><br><span class="line">        executeDML(sql.toString(),fieldValues.toArray());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="五-、完成跟新"><a href="#五-、完成跟新" class="headerlink" title="五 、完成跟新"></a>五 、完成跟新</h1><p>跟新也很简单，也是拼接sql语句，不过，这里为了方便，我们需要将修改的值的fileName显示的传入进来</p>
+<pre><code>* @param fieldNames 需要修改的值的属性名称，不需要传入主键的fieldName
+</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">update</span><span class="params">(Object table, String[] fieldNames)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//&#123;empName,age&#125; ----&gt;  update emp set empName=?,age=? where 主键=?</span></span><br><span class="line">        Class&lt;?&gt; clazz = table.getClass();</span><br><span class="line">        TableInfo tableInfo = TableContext.getClazzAllTable().get(clazz);</span><br><span class="line">        <span class="comment">//遍历 fieldName 拼装 update emp set empName=?,age=?</span></span><br><span class="line">        StringBuilder sql = <span class="keyword">new</span> StringBuilder(<span class="string">"update emp set "</span>);</span><br><span class="line">        <span class="comment">//属性的值列表</span></span><br><span class="line">        List&lt;Object&gt; fieldValues = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (String fieldName:fieldNames)&#123;</span><br><span class="line">            sql.append(fieldName+<span class="string">"=?,"</span>);</span><br><span class="line">            Object methodResult = ReflectUtils.getMethodResult(table, fieldName);</span><br><span class="line">            fieldValues.add(methodResult);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//将最后一个 , ---&gt; 空格</span></span><br><span class="line">        sql.replace(sql.lastIndexOf(<span class="string">","</span>),sql.length(),<span class="string">" "</span>);</span><br><span class="line">        <span class="comment">//拼接 where 主键=?</span></span><br><span class="line">        String priKeyName = tableInfo.getOnlyPriKey().getName();</span><br><span class="line">        sql.append(<span class="string">"where "</span>+priKeyName+<span class="string">"=?"</span>);</span><br><span class="line">        fieldValues.add(ReflectUtils.getMethodResult(table,priKeyName));</span><br><span class="line">        <span class="keyword">return</span> executeDML(sql.toString(), fieldValues.toArray());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="六、测试"><a href="#六、测试" class="headerlink" title="六、测试"></a>六、测试</h1><p>本篇完成了增删改，为方便测试，建立一个测试类，专门测试，内容如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test.cn.gxm.sorm.core; </span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.gxm.sorm.core.DBManager;</span><br><span class="line"><span class="keyword">import</span> cn.gxm.sorm.core.MysqlQuery;</span><br><span class="line"><span class="keyword">import</span> cn.gxm.sorm.core.TableContext;</span><br><span class="line"><span class="keyword">import</span> cn.gxm.sorm.pojo.Emp;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"><span class="keyword">import</span> org.junit.Before; </span><br><span class="line"><span class="keyword">import</span> org.junit.After;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.Date;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">* MysqlQuery Tester. </span></span><br><span class="line"><span class="comment">* </span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span> GXM www.guokangjie.cn</span></span><br><span class="line"><span class="comment">* <span class="doctag">@since</span></span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span> 1.0 </span></span><br><span class="line"><span class="comment">*/</span> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MysqlQueryTest</span> </span>&#123; </span><br><span class="line">    <span class="keyword">private</span> MysqlQuery mysqlQuery;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Before</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">before</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        mysqlQuery = <span class="keyword">new</span> MysqlQuery();</span><br><span class="line">        <span class="comment">// 测试之前将 db.properties加载到对应映射类中</span></span><br><span class="line">        DBManager.getConnection();</span><br><span class="line">        <span class="comment">// 加载所有的表信息</span></span><br><span class="line">        TableContext.getClazzAllTable();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">after</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * Method: executeDML(String sql, Object[] params)</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testExecuteDML</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="comment">//<span class="doctag">TODO:</span> Test goes here...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * Method: insert(Object table)</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testInsert</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Emp emp = <span class="keyword">new</span> Emp();</span><br><span class="line">        emp.setAge(<span class="number">22</span>);</span><br><span class="line">        emp.setBirthady(<span class="keyword">new</span> Date(<span class="number">19200000</span>));</span><br><span class="line">        emp.setEmpName(<span class="string">"阿豹"</span>);</span><br><span class="line">        emp.setSalary(<span class="number">160000</span>d);</span><br><span class="line">        mysqlQuery.insert(emp);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * Method: delete(Class clazz, Object primaryKey)</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testDeleteForClazzPrimaryKey</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        mysqlQuery.delete(Emp.class,<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * Method: delete(Object table)</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testDeleteTable</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Emp emp = <span class="keyword">new</span> Emp();</span><br><span class="line">        emp.setId(<span class="number">2</span>);</span><br><span class="line">        mysqlQuery.delete(emp);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * Method: update(Object table, String[] params)</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testUpdate</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        Emp emp = <span class="keyword">new</span> Emp();</span><br><span class="line">        emp.setId(<span class="number">3</span>);</span><br><span class="line">        emp.setSalary(<span class="number">20000</span>d);</span><br><span class="line">        emp.setEmpName(<span class="string">"明正"</span>);</span><br><span class="line">        <span class="keyword">int</span> update = mysqlQuery.update(emp, <span class="keyword">new</span> String[]&#123;<span class="string">"salary"</span>, <span class="string">"empName"</span>&#125;);</span><br><span class="line">        System.out.println(update!=<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">希望对您有所帮助</span>
+      <div class="donation-body">
+        <div class="tip text-center">May all the ordinary are great, all the ignoble bloom</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>smile</span>
+            
+            <img src="/images/temp/1.jpeg" alt>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/05/19/写出你自己的ORM框架（三）/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/2019/05/19/写出你自己的ORM框架（一）/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '277317290454635afa73',
+  clientSecret: '78223c859304da5e8d71bfce136d436c6ff95c37',
+  repo: 'blog-comment',
+  owner: 'forsigner',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: location.pathname,
+  admin: ['forsigner'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
