@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>&#39;实现mysql的主从备份&#39; | Gxm</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="MySQL,">
+  
+
+  <meta name="description" content="# 实现mysql的主从备份 如想了解更多的主从配置点击跳转 安装mysql安装步骤省略，详情可以查看点击跳转我这里为两台centos安装MySQL5.7  一台后面做为master（主）192.168.25.5 一台做为从（slave ）192.168.25.6  为减少不必要的麻烦，最好保证master的mysql的数据与slave的数据库一致 配置主(master)亲先将防火墙关闭  sy">
+<meta name="keywords" content="MySQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&#39;实现mysql的主从备份&#39;">
+<meta property="og:url" content="http://guokangjie.cn/2019/06/03/MySQL主从备份/index.html">
+<meta property="og:site_name" content="Gxm">
+<meta property="og:description" content="# 实现mysql的主从备份 如想了解更多的主从配置点击跳转 安装mysql安装步骤省略，详情可以查看点击跳转我这里为两台centos安装MySQL5.7  一台后面做为master（主）192.168.25.5 一台做为从（slave ）192.168.25.6  为减少不必要的麻烦，最好保证master的mysql的数据与slave的数据库一致 配置主(master)亲先将防火墙关闭  sy">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190603173738840.png">
+<meta property="og:updated_time" content="2019-06-03T10:04:06.554Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="&#39;实现mysql的主从备份&#39;">
+<meta name="twitter:description" content="# 实现mysql的主从备份 如想了解更多的主从配置点击跳转 安装mysql安装步骤省略，详情可以查看点击跳转我这里为两台centos安装MySQL5.7  一台后面做为master（主）192.168.25.5 一台做为从（slave ）192.168.25.6  为减少不必要的麻烦，最好保证master的mysql的数据与slave的数据库一致 配置主(master)亲先将防火墙关闭  sy">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190603173738840.png">
+
+  
+
+  
+    <link rel="icon" href="/images/avatar.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装mysql"><span class="toc-text">安装mysql</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置主-master"><span class="toc-text">配置主(master)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置从slave"><span class="toc-text">配置从slave</span></a></li></ol><li class="toc-item toc-level-1"><a class="toc-link" href="#测试MySQL的主从备份"><span class="toc-text">测试MySQL的主从备份</span></a>
+  </li></div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-MySQL主从备份" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">&#39;实现mysql的主从备份&#39;</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.06.03</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>GuoKangJie</span>
+        </span>
+      
+
+      
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>﻿# 实现mysql的主从备份</p>
+<p>如想了解更多的主从配置<a href="https://cloud.tencent.com/developer/article/1056094" target="_blank" rel="noopener">点击跳转</a></p>
+<h2 id="安装mysql"><a href="#安装mysql" class="headerlink" title="安装mysql"></a>安装mysql</h2><p>安装步骤省略，详情可以查看<a href="https://blog.csdn.net/a774630093/article/details/79270080" target="_blank" rel="noopener">点击跳转</a><br>我这里为两台centos安装MySQL5.7</p>
+<ul>
+<li>一台后面做为master（主）192.168.25.5</li>
+<li>一台做为从（slave ）192.168.25.6</li>
+</ul>
+<p><strong>为减少不必要的麻烦，最好保证master的mysql的数据与slave的数据库一致</strong></p>
+<h2 id="配置主-master"><a href="#配置主-master" class="headerlink" title="配置主(master)"></a>配置主(master)</h2><p><strong>亲先将防火墙关闭</strong></p>
+<blockquote>
+<p>systemctl disable firewalld.service</p>
+</blockquote>
+<p>第一步：修改/etc/my.conf文件</p>
+<blockquote>
+<p>该文件在window下为C:\ProgramData\MySQL\MySQL Server 5.7\my.ini</p>
+</blockquote>
+<p>在[mysqld]中添加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">binlog-ignore-db=mysql</span><br><span class="line">log-bin=master_log</span><br><span class="line">server-id=1</span><br><span class="line">#这个参数一般用在主主同步中，用来错开自增值, 防止键值冲突</span><br><span class="line">auto_increment_offset = 1           </span><br><span class="line">#这个参数一般用在主主同步中，用来错开自增值, 防止键值冲突</span><br><span class="line">auto_increment_increment = 1     </span><br><span class="line">#将函数复制到slave  </span><br><span class="line">log_bin_trust_function_creators = 1</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>server-id<br> master端的ID号；<strong>Master的server-id必须小于slave的server-id</strong></li>
+<li>log-bin<br> 同步的日志路径及文件名,主从备份时必须要有，这个目录要是mysql有权限写入的，最后的日志文件名称就是你命名的再加上后期mysql会自动加上文件名后缀和文件类型（如master_bin.00001）</li>
+<li>binlog-ignore-db:<br>不同步数据库(我这里是mysql)</li>
+</ul>
+<p>第二步：重启mysql服务</p>
+<blockquote>
+<p>systemctl restart mysql</p>
+</blockquote>
+<p>第三步：建立帐户并授权slave<br>说明其它主机可以使用slave这个用户账号来登陆master主机的MySQL(如果在授权的用户不存在就会自动创建)，一般不用root帐号，“%”表示所有客户端都可能连，只要帐号，密码正确，此处可用具体客户端IP代替，如192.168.145.226，加强安全。<br>*<em>   .<br> mysql&gt; GRANT ALL PRIVILEGES  ON   </em>.*   TO ‘slave‘@’%’  IDENTIFIED BY ‘123456’;</p>
+<p>第四步：刷新权限</p>
+<blockquote>
+<p>mysql&gt; FLUSH PRIVILEGES;</p>
+</blockquote>
+<p>第五步：查看mysql现在有哪些用户<br>mysql安装完成以后会有一个叫做mysql的数据库，其中有一张表叫做user，主要字段有user,host等等,记录的就是mysql的用户情况</p>
+<blockquote>
+<p>mysql&gt;select user,host from mysql.user;</p>
+</blockquote>
+<p>第六步：查询master的状态</p>
+<blockquote>
+<p>show master status;<br>show master status\G;</p>
+</blockquote>
+<p>请记住红线<br><img src="https://img-blog.csdnimg.cn/20190603173738840.png" alt="请记住"></p>
+<h2 id="配置从slave"><a href="#配置从slave" class="headerlink" title="配置从slave"></a>配置从slave</h2><p>第一步：修改/etc/my.conf文件</p>
+<p>在[mysqld]中添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">server_id = 2</span><br></pre></td></tr></table></figure></p>
+<p>还有许多其它选项，请查看官方文档，我这就不再多说</p>
+<p>第二步：修改uuid<br>主从模式要求mysql的物理名称不能一致，而我这里的两台的机器是因为是克隆的，所以一样，我需要修改，如果你不是，可省略该步骤</p>
+<blockquote>
+<p>vim var/lib/mysql/auto.conf    (或者删除/var/lib/mysql/auto.cnf文件)</p>
+</blockquote>
+<p>给予server-uuid一个随意值即可（可以直接改变最后一位数值），再重新启动服务mysql</p>
+<blockquote>
+<p>systemctl restart mysql</p>
+</blockquote>
+<p>第三步：关闭slave功能<br>因为MySQL5.5以后默认开启slave功能，所以这里先停止slave</p>
+<blockquote>
+<p>mysql&gt;stop slave;</p>
+</blockquote>
+<p>第三步：在slave中执行同步命令<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>执行同步命令，设置主服务器ip，同步账号密码，同步位置</span><br><span class="line"><span class="meta">mysql&gt;</span>change master to master_host='192.168.25.5',master_port=3306,master_user='slave',master_password='123456',master_log_file='master_log.000001';</span><br></pre></td></tr></table></figure></p>
+<p>注意语句中间不要断开，master_port为mysql服务器端口号(无引号)，master_user为执行同步操作的数据库账户（前面在master上使用grant），这里的master_log.000001就是log-bin对应的值)。</p>
+<p>第四步：开启同步功能</p>
+<blockquote>
+<p>mysql&gt;start slave;</p>
+</blockquote>
+<h1 id="测试MySQL的主从备份"><a href="#测试MySQL的主从备份" class="headerlink" title="测试MySQL的主从备份"></a>测试MySQL的主从备份</h1><p>测试就是在主库中进行DDL以及DML语句的执行，看从库是否会跟主库一样发生变化</p>
+<p>master中<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">database</span> <span class="keyword">test</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="keyword">test</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`test`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  <span class="string">`username`</span> <span class="built_in">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`password`</span> <span class="built_in">varchar</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> AUTO_INCREMENT=<span class="number">2</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</span><br><span class="line"></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">test</span>(username,passwor) <span class="keyword">values</span>(<span class="string">'gxm'</span>,<span class="string">'123456'</span>);</span><br></pre></td></tr></table></figure></p>
+<p>查看master与slave是否都有变化,如果数据一致，就配置成功</p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">希望对您有所帮助</span>
+      <div class="donation-body">
+        <div class="tip text-center">May all the ordinary are great, all the ignoble bloom</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>smile</span>
+            
+            <img src="/images/temp/1.jpeg" alt>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/05/19/写出你自己的ORM框架（二/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '277317290454635afa73',
+  clientSecret: '78223c859304da5e8d71bfce136d436c6ff95c37',
+  repo: 'blog-comment',
+  owner: 'forsigner',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: location.pathname,
+  admin: ['forsigner'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
