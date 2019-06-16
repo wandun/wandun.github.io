@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>基于netty的简易RPC | Gxm</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="netty,">
+  
+
+  <meta name="description" content="前言：代码以上传点击跳转 一 结构说明1.1 相信大家使用过RPC框架,例如（dubbo等等）和netty，我这里就不再多说了，基本项目架构如下 1.2 基于上面，netty也是一样，不过是consumer是netty的客户端，provider是netty的服务端，基本如图所示1.3 即一共三个项目该项目需要完成的功能，interface项目中定义了一个接口（BookService）,其实现类在">
+<meta name="keywords" content="netty">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于netty的简易RPC">
+<meta property="og:url" content="http://guokangjie.cn/2019/06/16/基于netty的简易RPC/index.html">
+<meta property="og:site_name" content="Gxm">
+<meta property="og:description" content="前言：代码以上传点击跳转 一 结构说明1.1 相信大家使用过RPC框架,例如（dubbo等等）和netty，我这里就不再多说了，基本项目架构如下 1.2 基于上面，netty也是一样，不过是consumer是netty的客户端，provider是netty的服务端，基本如图所示1.3 即一共三个项目该项目需要完成的功能，interface项目中定义了一个接口（BookService）,其实现类在">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190616094803673.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190616095343122.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190616100233417.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190616104033421.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:updated_time" content="2019-06-16T02:52:32.211Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于netty的简易RPC">
+<meta name="twitter:description" content="前言：代码以上传点击跳转 一 结构说明1.1 相信大家使用过RPC框架,例如（dubbo等等）和netty，我这里就不再多说了，基本项目架构如下 1.2 基于上面，netty也是一样，不过是consumer是netty的客户端，provider是netty的服务端，基本如图所示1.3 即一共三个项目该项目需要完成的功能，interface项目中定义了一个接口（BookService）,其实现类在">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190616094803673.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+
+  
+
+  
+    <link rel="icon" href="/images/avatar.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一-结构说明"><span class="toc-text">一 结构说明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二-整体思路"><span class="toc-text">二 整体思路</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三-具体实现"><span class="toc-text">三 具体实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-interface项目的实现"><span class="toc-text">3.1 interface项目的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-1-数据的返回对象（pojo）"><span class="toc-text">3.1.1 数据的返回对象（pojo）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-2-数据传输对象"><span class="toc-text">3.1.2 数据传输对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-4接口"><span class="toc-text">3.1.4接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-provider-server-项目的实现"><span class="toc-text">3.2 provider(server)项目的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-1-BookService的具体实现"><span class="toc-text">3.2.1 BookService的具体实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-2-netty的服务端实现"><span class="toc-text">3.2.2 netty的服务端实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-3-根据数据传输对象完成反射"><span class="toc-text">3.2.3 根据数据传输对象完成反射</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-consumer-client-项目的实现"><span class="toc-text">3.3 consumer(client)项目的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-1数据的发送"><span class="toc-text">3.3.1数据的发送</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-2数据的接收"><span class="toc-text">3.3.2数据的接收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-3-数据的发送的代理"><span class="toc-text">3.3.3 数据的发送的代理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#四-代码的测试"><span class="toc-text">四 代码的测试</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-基于netty的简易RPC" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">基于netty的简易RPC</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.06.16</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>GuoKangJie</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/netty/">netty</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>﻿<strong>前言：代码以上传<a href="https://github.com/wandun/nettyRPC" target="_blank" rel="noopener">点击跳转</a></strong></p>
+<h1 id="一-结构说明"><a href="#一-结构说明" class="headerlink" title="一 结构说明"></a>一 结构说明</h1><p>1.1 相信大家使用过RPC框架,例如（dubbo等等）和netty，我这里就不再多说了，基本项目架构如下<br><img src="https://img-blog.csdnimg.cn/20190616094803673.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="基于RPC的简单项目架构"></p>
+<p>1.2 基于上面，netty也是一样，不过是consumer是netty的客户端，provider是netty的服务端，基本如图所示<br><img src="https://img-blog.csdnimg.cn/20190616095343122.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="netty简易架构"><br>1.3 即一共三个项目<br><img src="https://img-blog.csdnimg.cn/20190616100233417.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="完整架构"><br>该项目需要完成的功能，interface项目中定义了一个接口（BookService）,其实现类在provider项目中，<br>现在consumer项目使用interface项目中的接口（BookService）调用其方法（findBookById）,<br>得到其方法的结果</p>
+<h1 id="二-整体思路"><a href="#二-整体思路" class="headerlink" title="二 整体思路"></a>二 整体思路</h1><p>2.1<br> 服务提供者（也就是netty服务端，后面我统称服务提供者）<br> 服务消费者（也就是netty客户端，后面我统称服务消费者）</p>
+<p>服务消费者传递一个数据对象给服务端，再从服务端得到返回的数据即可。那么重点就是</p>
+<ul>
+<li>客户端传输给服务端的数据对象是什么</li>
+<li>服务端又如何才能根据数据对象进行本地方法的调用？</li>
+</ul>
+<p>2.2<br>解决如上两个问题便完成了简易的RPC<br>先说第一个：<br><strong>客户端传输给服务端的数据对象是什么？</strong></p>
+<blockquote>
+<ul>
+<li>那个类</li>
+<li>类中的什么方法</li>
+<li>方法的参数类型（一个类又有许多的方法）</li>
+<li>方法的参数值</li>
+</ul>
+</blockquote>
+<p>再说第二个：<br><strong>服务端又如何才能根据数据对象进行本地方法的调用？</strong></p>
+<blockquote>
+<p>直接通过反射调用本地的实现类即可，再将得到的数据返回</p>
+</blockquote>
+<h1 id="三-具体实现"><a href="#三-具体实现" class="headerlink" title="三 具体实现"></a>三 具体实现</h1><h2 id="3-1-interface项目的实现"><a href="#3-1-interface项目的实现" class="headerlink" title="3.1 interface项目的实现"></a>3.1 interface项目的实现</h2><p>该项目中包括consumer和provider都需要的东西</p>
+<ul>
+<li>数据的返回对象（pojo）</li>
+<li>方法的接口 (service等等)</li>
+<li>客户端与服务端的传输对象</li>
+</ul>
+<h3 id="3-1-1-数据的返回对象（pojo）"><a href="#3-1-1-数据的返回对象（pojo）" class="headerlink" title="3.1.1 数据的返回对象（pojo）"></a>3.1.1 数据的返回对象（pojo）</h3><p>我这里就定义一个数据返回对象（Book）,set/get等等省略<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-1-2-数据传输对象"><a href="#3-1-2-数据传输对象" class="headerlink" title="3.1.2 数据传输对象"></a>3.1.2 数据传输对象</h3><p>既然消费者需要通过反射，那么传输对象应是如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassInfo</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 调用的具体类的类名全路径(即包名加类名 service.BookService)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String fullPath;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 类中的那个方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String methodName;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 方法中的参数类型</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Class []paramType;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 方法中的参数值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Object []paramValue;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-1-4接口"><a href="#3-1-4接口" class="headerlink" title="3.1.4接口"></a>3.1.4接口</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BookService</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据Id查找指定的图书</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> bookId</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Book <span class="title">findBookById</span><span class="params">(String bookId)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-2-provider-server-项目的实现"><a href="#3-2-provider-server-项目的实现" class="headerlink" title="3.2 provider(server)项目的实现"></a>3.2 provider(server)项目的实现</h2><p>该项目中包括</p>
+<ul>
+<li>接口的实现</li>
+<li>以及netty的服务端实现</li>
+<li>根据数据传输对象完成反射</li>
+</ul>
+<h3 id="3-2-1-BookService的具体实现"><a href="#3-2-1-BookService的具体实现" class="headerlink" title="3.2.1 BookService的具体实现"></a>3.2.1 BookService的具体实现</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BookServiceImpl</span> <span class="keyword">implements</span> <span class="title">BookService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Book <span class="title">findBookById</span><span class="params">(String bookId)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//  如果bookId为1 就返回图书对象</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"1"</span>.equals(bookId))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Book(<span class="string">"1"</span>,<span class="string">"骆驼祥子"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 其它返归空</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-2-2-netty的服务端实现"><a href="#3-2-2-netty的服务端实现" class="headerlink" title="3.2.2 netty的服务端实现"></a>3.2.2 netty的服务端实现</h3><p>因代码以上传github,就不在在这里写了</p>
+<h3 id="3-2-3-根据数据传输对象完成反射"><a href="#3-2-3-根据数据传输对象完成反射" class="headerlink" title="3.2.3 根据数据传输对象完成反射"></a>3.2.3 根据数据传输对象完成反射</h3><p>其中需要用到reflections的jar包实现，根据结果类型，找到其下所有实现类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 得到某接口下某个实现类的全路径</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> classInfo</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span>  类的全路径（包名加类名）如：service.impl.BookServiceImpl</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">getImplClassName</span><span class="params">(ClassInfo classInfo)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">// 拿到BookService类</span></span><br><span class="line">        Class superClass=Class.forName(classInfo.getFullPath());</span><br><span class="line">        <span class="keyword">int</span> indexOf = classInfo.getFullPath().lastIndexOf(<span class="string">"."</span>);</span><br><span class="line">        <span class="comment">// 指定从那个包下开始搜索(我这里是因为service与service.impl都在service下，所以我直接截取接口的包名即可)</span></span><br><span class="line">        Reflections reflections = <span class="keyword">new</span> Reflections(classInfo.getFullPath().substring(<span class="number">0</span>,indexOf-<span class="number">1</span>));</span><br><span class="line">        <span class="comment">//得到某接口下的所有实现类</span></span><br><span class="line">        Set&lt;Class&gt; ImplClassSet=reflections.getSubTypesOf(superClass);</span><br><span class="line">        <span class="keyword">if</span>(ImplClassSet.size()==<span class="number">0</span>)&#123;</span><br><span class="line">            System.out.println(<span class="string">"未找到实现类"</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(ImplClassSet.size()&gt;<span class="number">1</span>)&#123;</span><br><span class="line">            System.out.println(<span class="string">"找到多个实现类，未明确使用哪一个"</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//把集合转换为数组</span></span><br><span class="line">            Class[] classes=ImplClassSet.toArray(<span class="keyword">new</span> Class[<span class="number">0</span>]);</span><br><span class="line">            <span class="comment">//得到实现类的名字</span></span><br><span class="line">            <span class="keyword">return</span> classes[<span class="number">0</span>].getName();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>测试如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 测试上面结果</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testGetImplClassName</span><span class="params">()</span></span>&#123;</span><br><span class="line">  ClassInfo classInfo = <span class="keyword">new</span> ClassInfo(<span class="string">"service.BookService"</span>,<span class="string">"findBookById"</span>,</span><br><span class="line">                <span class="keyword">new</span> Class[]&#123;String.class&#125;,<span class="keyword">new</span> Object[]&#123;<span class="string">"1"</span>&#125;);</span><br><span class="line">        String implClassName = getImplClassName(classInfo);</span><br><span class="line">        <span class="comment">// service.impl.BookServiceImpl</span></span><br><span class="line">        System.out.println(implClassName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接下来就可以根据反射调用实现类的具体方法了<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 通过反射调用其方法并返回</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> classInfo</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Object <span class="title">invokeAndReturn</span><span class="params">(ClassInfo classInfo)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            String implClassName = getImplClassName(classInfo);</span><br><span class="line">            Class&lt;?&gt; clazz = Class.forName(implClassName);</span><br><span class="line">            Object newInstance = clazz.newInstance();</span><br><span class="line">            Method method = clazz.getMethod(classInfo.getMethodName(), classInfo.getParamType());</span><br><span class="line">            <span class="keyword">return</span> method.invoke(newInstance,classInfo.getParamValue());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="3-3-consumer-client-项目的实现"><a href="#3-3-consumer-client-项目的实现" class="headerlink" title="3.3 consumer(client)项目的实现"></a>3.3 consumer(client)项目的实现</h2><p>该项目中包括</p>
+<ul>
+<li>数据的发送</li>
+<li>以及数据的接收<h3 id="3-3-1数据的发送"><a href="#3-3-1数据的发送" class="headerlink" title="3.3.1数据的发送"></a>3.3.1数据的发送</h3>根据netty中的ChannelFuture得到通道，后发送数据 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ChannelFuture future = b.connect(<span class="string">"127.0.0.1"</span>, <span class="number">9999</span>).sync();</span><br><span class="line">                    <span class="comment">// 将需要调用的方法数据发到服务端</span></span><br><span class="line">                    future.channel().writeAndFlush(classInfo).sync();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="3-3-2数据的接收"><a href="#3-3-2数据的接收" class="headerlink" title="3.3.2数据的接收"></a>3.3.2数据的接收</h3><p>在客户端收到服务端发送消息处，返回数据结果即可<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientHandler</span> <span class="keyword">extends</span> <span class="title">ChannelInboundHandlerAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Object response;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getResponse</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 读取服务器端返回的数据(远程调用的结果)</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> ctx</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> msg</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">channelRead</span><span class="params">(ChannelHandlerContext ctx, Object msg)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        response = msg;</span><br><span class="line">        ctx.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-3-3-数据的发送的代理"><a href="#3-3-3-数据的发送的代理" class="headerlink" title="3.3.3 数据的发送的代理"></a>3.3.3 数据的发送的代理</h3><p>数据的返送使用反射中的代码</p>
+<h1 id="四-代码的测试"><a href="#四-代码的测试" class="headerlink" title="四 代码的测试"></a>四 代码的测试</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestRPC</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    	<span class="comment">// 通过代理获得接口对象</span></span><br><span class="line">        BookService bookService = (BookService)RpcProxy.create(BookService.class);</span><br><span class="line">        <span class="comment">// 调用接口其方法，就会激活Proxy的invoke方法，也就打开了netty的client,发送数据</span></span><br><span class="line">        Book book = bookService.findBookById(<span class="string">"1"</span>);</span><br><span class="line">        System.out.println(book);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20190616104033421.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="调用结果"></p>
+<p>代码地址：<a href="https://github.com/wandun/nettyRPC" target="_blank" rel="noopener">点击跳转</a></p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">希望对您有所帮助</span>
+      <div class="donation-body">
+        <div class="tip text-center">May all the ordinary are great, all the ignoble bloom</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>smile</span>
+            
+            <img src="/images/temp/1.jpeg" alt>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/06/05/MyCat配置MySQL读写分离/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '277317290454635afa73',
+  clientSecret: '78223c859304da5e8d71bfce136d436c6ff95c37',
+  repo: 'blog-comment',
+  owner: 'forsigner',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: location.pathname,
+  admin: ['forsigner'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
