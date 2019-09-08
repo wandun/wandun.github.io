@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>搭建Apollo多种环境 | Gxm</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="apollo,">
+  
+
+  <meta name="description" content="# 一、前言 既然大家看到这里多少对Apollo一些了解，关于Apollo是什么，功能又那些我就不多说了，对于我们的一般项目，都会有多种开发环境，比如开发环境（dev）,测试环境（uat）,生产环境（pro），每一种项目的开发环境项目配置又有所不同，所以，需要多种配置，在各个环境下一不同的配置运行！ 二、搭建准备1、三台虚拟机（如果你在一台上搭建也是可以的，我这里为了更加的清晰）  192.16">
+<meta name="keywords" content="apollo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="搭建Apollo多种环境">
+<meta property="og:url" content="http://guokangjie.cn/2019/09/08/搭建Apollo多种环境/index.html">
+<meta property="og:site_name" content="Gxm">
+<meta property="og:description" content="# 一、前言 既然大家看到这里多少对Apollo一些了解，关于Apollo是什么，功能又那些我就不多说了，对于我们的一般项目，都会有多种开发环境，比如开发环境（dev）,测试环境（uat）,生产环境（pro），每一种项目的开发环境项目配置又有所不同，所以，需要多种配置，在各个环境下一不同的配置运行！ 二、搭建准备1、三台虚拟机（如果你在一台上搭建也是可以的，我这里为了更加的清晰）  192.16">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908085000577.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908102448182.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908120514985.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908105457754.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908120653648.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908120900924.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908121954662.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908122157517.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908122331522.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/201909081225257.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908122641749.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908123542688.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908123636662.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908123651994.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190908123704778.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:updated_time" content="2019-09-08T04:49:50.129Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="搭建Apollo多种环境">
+<meta name="twitter:description" content="# 一、前言 既然大家看到这里多少对Apollo一些了解，关于Apollo是什么，功能又那些我就不多说了，对于我们的一般项目，都会有多种开发环境，比如开发环境（dev）,测试环境（uat）,生产环境（pro），每一种项目的开发环境项目配置又有所不同，所以，需要多种配置，在各个环境下一不同的配置运行！ 二、搭建准备1、三台虚拟机（如果你在一台上搭建也是可以的，我这里为了更加的清晰）  192.16">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20190908085000577.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+
+  
+
+  
+    <link rel="icon" href="/images/avatar.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#二、搭建准备"><span class="toc-text">二、搭建准备</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三、修改配置"><span class="toc-text">三、修改配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#四、上传文件"><span class="toc-text">四、上传文件</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#五、修改数据库"><span class="toc-text">五、修改数据库</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#六、启动"><span class="toc-text">六、启动</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#七、测试"><span class="toc-text">七、测试</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-搭建Apollo多种环境" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">搭建Apollo多种环境</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.09.08</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>GuoKangJie</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/apollo/">apollo</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>﻿# 一、前言</p>
+<p>既然大家看到这里多少对Apollo一些了解，关于Apollo是什么，功能又那些我就不多说了，对于我们的一般项目，都会有多种开发环境，比如开发环境（dev）,测试环境（uat）,生产环境（pro），每一种项目的开发环境项目配置又有所不同，所以，需要多种配置，在各个环境下一不同的配置运行！</p>
+<h1 id="二、搭建准备"><a href="#二、搭建准备" class="headerlink" title="二、搭建准备"></a>二、搭建准备</h1><p>1、三台虚拟机（如果你在一台上搭建也是可以的，我这里为了更加的清晰）</p>
+<ul>
+<li>192.168.25.5 搭建portal （管理界面）</li>
+<li>192.168.25.6 搭建config/admin（dev环境）</li>
+<li>192.168.25.7 搭建config/admin（pro环境）<br>即portal是Apollo的管理页面，只需要搭建一个就行了，如果你还有其它环境则再配置一对config/admin即可，如下官网图片<br><img src="https://img-blog.csdnimg.cn/20190908085000577.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="搭建说明"><br>2、 下载源码<br>因为Apollo源码是开源的，我们下载下来，根据我们的需求修该配置，打包即可！</li>
+</ul>
+<h1 id="三、修改配置"><a href="#三、修改配置" class="headerlink" title="三、修改配置"></a>三、修改配置</h1><p>1、创建数据库<br>数据库的脚本Apollo已近放在源码里面了，如下图<br><img src="https://img-blog.csdnimg.cn/20190908102448182.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>192.168.25.5（protal）服务器上数据库执行<strong>portaldb</strong>，<strong>分别</strong>在192.168.25.6（dev），192.168.25.7（pro）数据库上执行<strong>configdb</strong>，如下图<br><img src="https://img-blog.csdnimg.cn/20190908120514985.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>2、修改脚本配置文件<br><img src="https://img-blog.csdnimg.cn/20190908105457754.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>这里的数据库地址localhost不用更改 ，因为等一下我们执行脚本会将打包好的脚本放在对应的服务器中，那么数据库就是在本地了，至于portal如何连接到dev与pro的服务器，就需要设置下面的  （***_meta）了，因此只需要更改dev_meta与pro_meta的服务起地址！<br>3、执行脚本<br>直接执行build.bat即可，如图<br><img src="https://img-blog.csdnimg.cn/20190908120653648.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h1 id="四、上传文件"><a href="#四、上传文件" class="headerlink" title="四、上传文件"></a>四、上传文件</h1><p>执行完上面的build脚本之后会在相应位置生成指定的压缩包</p>
+<ul>
+<li>apollo\apollo-portal\target生成apollo-portal-1.5.0-SNAPSHOT-github.zip<br><img src="https://img-blog.csdnimg.cn/20190908120900924.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="将"></li>
+<li>apollo\apollo-configservice\target生成apollo-configservice-1.5.0-SNAPSHOT-github.zip（图省略）</li>
+<li>apollo\apollo-adminservice\target生成apollo-adminservice-1.5.0-SNAPSHOT-github.zip（图省略）</li>
+</ul>
+<p>将apollo-portal-1.5.0-SNAPSHOT-github.zip上传到192.168.25.5（protal）的服务器上解压，查看配置并修改，修改config下的apollo-env.properties如下<br><img src="https://img-blog.csdnimg.cn/20190908121954662.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>查看数据库配置<br><img src="https://img-blog.csdnimg.cn/20190908122157517.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li>将apollo-configservice-1.5.0-SNAPSHOT-github.zip和apollo-adminservice-1.5.0-SNAPSHOT-github.zip上传到192.168.25.6（dev）的服务器上解压，并查看配置信息<br>adminservice解压查看信息<br><img src="https://img-blog.csdnimg.cn/20190908122331522.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>configservice解压查看信息<br><img src="https://img-blog.csdnimg.cn/201909081225257.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+<li>将apollo-configservice-1.5.0-SNAPSHOT-github.zip和apollo-adminservice-1.5.0-SNAPSHOT-github.zip上传到192.168.25.7 （pro）的服务器上解压，并查看配置信息（如上图）</li>
+</ul>
+<h1 id="五、修改数据库"><a href="#五、修改数据库" class="headerlink" title="五、修改数据库"></a>五、修改数据库</h1><p>打开192.168.25.5（protal）的数据库中的ApolloPortalDB，将serverConfig表中的dev换成dev,pro（因为现在我们有两种环境），如下图<br><img src="https://img-blog.csdnimg.cn/20190908122641749.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h1 id="六、启动"><a href="#六、启动" class="headerlink" title="六、启动"></a>六、启动</h1><p><strong>启动之前，需要说明一点的是，Apollo会在opt/logs文件中写入日志，所以你需要保证当前启动的用户拥有该权限！</strong></p>
+<p>启动顺序如下（<strong>启动脚本在对应文件的script中</strong>）<br>192.168.25.6（dev）</p>
+<ul>
+<li>configservice</li>
+<li>adminservice</li>
+</ul>
+<p>192.168.25.7（pro）</p>
+<ul>
+<li>configservice</li>
+<li>adminservice</li>
+</ul>
+<p>192.168.25.5（portal）</p>
+<p>启动可能会慢一点</p>
+<h1 id="七、测试"><a href="#七、测试" class="headerlink" title="七、测试"></a>七、测试</h1><p>打开chrome,访问192.168.25.5:8070（protal）管理页面，创建应用，你就会发现有两种环境了！<br>账号：apollo<br>密码：admin</p>
+<p><img src="https://img-blog.csdnimg.cn/20190908123542688.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><strong>创建测试</strong><br><img src="https://img-blog.csdnimg.cn/20190908123636662.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><strong>pro环境中</strong><br><img src="https://img-blog.csdnimg.cn/20190908123651994.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><strong>dev环境中</strong><br><img src="https://img-blog.csdnimg.cn/20190908123704778.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><strong>如果你还需要其它环境，再继续配置一组（adminserver和configserver即可）</strong></p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">希望对您有所帮助</span>
+      <div class="donation-body">
+        <div class="tip text-center">May all the ordinary are great, all the ignoble bloom</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>smile</span>
+            
+            <img src="/images/temp/1.jpeg" alt>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/06/16/基于netty的简易RPC/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '277317290454635afa73',
+  clientSecret: '78223c859304da5e8d71bfce136d436c6ff95c37',
+  repo: 'blog-comment',
+  owner: 'forsigner',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: location.pathname,
+  admin: ['forsigner'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
