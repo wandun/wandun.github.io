@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>jenkins自动部署springboot | Gxm</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="jenkins,">
+  
+
+  <meta name="description" content="# 安装jenkins 安装步骤省略，网上很多，这里就不再啰嗦了。 ==建议安装的插件==  maven 项目插件 ，之后在构建新的项目时，可以直接选择构建一个maven项目   Maven Integration plugin   汉化插件locale plugin  这个插件效果不好 点击跳转Localization: Chinese (Simplified)  这个效果也不好但是比上面那个">
+<meta name="keywords" content="jenkins">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jenkins自动部署springboot">
+<meta property="og:url" content="http://guokangjie.cn/2019/09/08/jenkins自动部署springboot/index.html">
+<meta property="og:site_name" content="Gxm">
+<meta property="og:description" content="# 安装jenkins 安装步骤省略，网上很多，这里就不再啰嗦了。 ==建议安装的插件==  maven 项目插件 ，之后在构建新的项目时，可以直接选择构建一个maven项目   Maven Integration plugin   汉化插件locale plugin  这个插件效果不好 点击跳转Localization: Chinese (Simplified)  这个效果也不好但是比上面那个">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019090214131556.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902141758562.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902142036720.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902142113489.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902142443483.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019090214240398.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902142515161.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019090214264169.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902142710388.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019090214443296.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902145225215.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902144148125.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902151036641.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902151320627.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902151412962.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902151438331.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902151459804.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902151533938.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/2019090215091055.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902151734859.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190902151921782.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+<meta property="og:updated_time" content="2019-09-08T04:57:06.443Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jenkins自动部署springboot">
+<meta name="twitter:description" content="# 安装jenkins 安装步骤省略，网上很多，这里就不再啰嗦了。 ==建议安装的插件==  maven 项目插件 ，之后在构建新的项目时，可以直接选择构建一个maven项目   Maven Integration plugin   汉化插件locale plugin  这个插件效果不好 点击跳转Localization: Chinese (Simplified)  这个效果也不好但是比上面那个">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/2019090214131556.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70">
+
+  
+
+  
+    <link rel="icon" href="/images/avatar.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#构建项目"><span class="toc-text">构建项目</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#测试"><span class="toc-text">测试</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#注意点"><span class="toc-text">注意点</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-jenkins自动部署springboot" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">jenkins自动部署springboot</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.09.08</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>GuoKangJie</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/jenkins/">jenkins</a>
+  </span>
+
+
+
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>﻿# 安装jenkins</p>
+<p>安装步骤省略，网上很多，这里就不再啰嗦了。<br> ==建议安装的插件==</p>
+<ul>
+<li><p>maven 项目插件 ，之后在构建新的项目时，可以直接选择构建一个maven项目<br><img src="https://img-blog.csdnimg.cn/2019090214131556.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<blockquote>
+<p> Maven Integration plugin</p>
+</blockquote>
+</li>
+<li><p>汉化插件<br>locale plugin  这个插件效果不好 <a href="https://blog.csdn.net/w294954902/article/details/82587295" target="_blank" rel="noopener">点击跳转</a><br>Localization: Chinese (Simplified)  这个效果也不好但是比上面那个稍微好点  <a href="https://blog.csdn.net/u011990675/article/details/88851542" target="_blank" rel="noopener">点击跳转</a></p>
+<p>我个人两个都装了</p>
+<h1 id="构建项目"><a href="#构建项目" class="headerlink" title="构建项目"></a>构建项目</h1></li>
+<li>点击新建  </li>
+<li>选择maven项目（如果之前没有安装maven的插件这里是没有这个选项的）<br><img src="https://img-blog.csdnimg.cn/20190902141758562.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+<li>填写项目构建描述，以及完善对老项目构建的保留时间<br><img src="https://img-blog.csdnimg.cn/20190902142036720.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+<li><ul>
+<li>参数话构建<br><img src="https://img-blog.csdnimg.cn/20190902142113489.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+</ul>
+</li>
+<li>添加项目地址（github  |  gitlab   |  gitee ）都可以<img src="https://img-blog.csdnimg.cn/20190902142443483.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>如果你是第一次构建项目，而且没有全局配置过你的项目账号和密码，你可以在这里直接配置，点击选择Credentials旁边的添加，输入你的账号即可<br><img src="https://img-blog.csdnimg.cn/2019090214240398.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+<li>配置拉去后选择构建的分支<br><img src="https://img-blog.csdnimg.cn/20190902142515161.png" alt="在这里插入图片描述"><br>我这里就直接matser分支了</li>
+<li>每当构建SNAPSHOT依赖项时构建<br><img src="https://img-blog.csdnimg.cn/2019090214264169.png" alt="在这里插入图片描述"></li>
+<li>代码被拉取下来后做的事情<br><img src="https://img-blog.csdnimg.cn/20190902142710388.png" alt="在这里插入图片描述"></li>
+<li>点击构建时执行的shell脚本<br><img src="https://img-blog.csdnimg.cn/2019090214443296.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>我这里选择是脚本，大家可以选择其他的方式，该部分脚本我是看了别人的博客<a href="https://blog.csdn.net/shenhonglei1234/article/details/71480064#commentBox" target="_blank" rel="noopener">点击跳转</a>,非常感谢，他的脚本！！以下是该脚本内容,我改了文件命名以及路径，事后去看了下这个脚本，大致说下<br>4、重点是脚本<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!/bin/bash </span><br><span class="line">cd /home/admin/jenkins/jenkins_springboot_shell</span><br><span class="line">echo "Execute shell Start"</span><br><span class="line">sh stop.sh</span><br><span class="line">sh replace.sh</span><br><span class="line">echo "Execute shell Finish"</span><br><span class="line">chmod 777 /home/admin/jenkins/jenkins_springboot_shell/startup.sh</span><br><span class="line">BUILD_ID=dontKillMe nohup /home/admin/jenkins/jenkins_springboot_shell/startup.sh &amp;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>三个文件内容</p>
+<ul>
+<li>stop.sh<br>停止之前执行的springboot项目，因为需要从新去拉去项目代码，重新构建<ul>
+<li>先进入jenkins_springboot_shell目录</li>
+<li>输出一句话Stopping SpringBoot Application for CMP</li>
+<li>使用命令ps -ef | grep jenkins-demo-0.0.1-SNAPSHOT.jar | grep -v grep | awk ‘{print $2}’<ul>
+<li>这部分命令可以分为3部分</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ps -ef \</td>
+<td>grep jenkins-demo-0.0.1-SNAPSHOT.jar</td>
+<td>查看系统进程中的含有jenkins-demo-0.0.1-SNAPSHOT.ja的进程</td>
+</tr>
+</tbody>
+</table>
+<p><img src="https://img-blog.csdnimg.cn/20190902145225215.png" alt="在这里插入图片描述"><br>但是会有2个进程，此时就需要过滤<br>|命令| 说明  |<br>|–|–|<br>|grep -v grep|  -v 是反转 就是不包含的意思，这就会吧包含grep的过滤掉，也就是会把第二条过滤掉  |</p>
+<p>接下使用awk命令将进程id取出即可<br>|命令| 说明  |<br>|–|–|<br>|awk ‘{print $2}| 选择第二个参数 |</p>
+<ul>
+<li>如果pid不为空则使用kill -9 pid 将该进程删除<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>!将应用停止</span><br><span class="line"><span class="meta">#</span>!stop.sh</span><br><span class="line"><span class="meta">#</span>!/bin/bash</span><br><span class="line">cd /home/admin/jenkins/jenkins_springboot_shell</span><br><span class="line">echo "Stopping SpringBoot Application for CMP"</span><br><span class="line">ls</span><br><span class="line">pid=`ps -ef | grep jenkins-demo-0.0.1-SNAPSHOT.jar | grep -v grep | awk '&#123;print $2&#125;'`</span><br><span class="line">if [ -n "$pid" ]</span><br><span class="line">then</span><br><span class="line"><span class="meta">#</span>!kill -9 强制终止</span><br><span class="line">   echo "kill -9 的pid:" $pid</span><br><span class="line">   kill -9 $pid</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>replace.sh<br>大致意思就如果deploy_cmp文件里面有jar包说明之前发布过，则将该jar包放到deploy_cmp_bak目录下加上时间备份，再将最新构建的jar包放到deploy_cmp目录下，以后就直接从该目录下启动jar包</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">jar_name=jenkins-demo-0.0.1-SNAPSHOT.jar</span><br><span class="line"><span class="meta">#</span>!编译好的jar包存放地址</span><br><span class="line">file_path=/root/.jenkins/workspace/test-springboot/target</span><br><span class="line"><span class="meta">#</span>!将现有的jar备份后，将新的jar包替换</span><br><span class="line">file="/home/admin/jenkins/deploy_cmp/jenkins-demo-0.0.1-SNAPSHOT.jar"</span><br><span class="line">if [ -f "$file" ]</span><br><span class="line">then</span><br><span class="line">mv /home/admin/jenkins/deploy_cmp/jenkins-demo-0.0.1-SNAPSHOT.jar  /home/admin/jenkins/deploy_cmp_bak/jenkins-demo-0.0.1-SNAPSHOT.jar.`date +%Y%m%d%H%M%S`</span><br><span class="line">fi</span><br><span class="line">cp /root/.jenkins/workspace/test-springboot/target/jenkins-demo-0.0.1-SNAPSHOT.jar  /home/admin/jenkins/deploy_cmp/</span><br></pre></td></tr></table></figure>
+<ul>
+<li>startup.sh<br>这里就是直接进入deploy_cmp目录启动jar包即可（这里不会端口冲突，之前在stop.sh中以及杀掉了进程）<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">echo "授予当前用户权限"</span><br><span class="line">chmod 777 /home/admin/jenkins/deploy_cmp/jenkins-demo-0.0.1-SNAPSHOT.jar</span><br><span class="line">echo "执行....."</span><br><span class="line">cd /home/admin/jenkins/deploy_cmp/</span><br><span class="line">java -jar jenkins-demo-0.0.1-SNAPSHOT.jar</span><br><span class="line">echo "**********************cmp on  jenkins started*************************"</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>目录</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>deploy_cmp</td>
+<td>jar包被打包后放置的目录（运行时以该目录的jar包为准）</td>
+</tr>
+<tr>
+<td>deploy_cmp_bak</td>
+<td>再次打包时保留上一个版本的jar目录 (保留以前历史的打包版本)</td>
+</tr>
+<tr>
+<td>jenkins_springboot_shell</td>
+<td>存放stop.sh、start.sh、replace.sh 脚本命令的目录</td>
+</tr>
+</tbody>
+</table>
+<p>大致目录如下<br><img src="https://img-blog.csdnimg.cn/20190902144148125.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>deploy_cmp和deploy_cmp_bak目录应该大家是空的，我这里是因为我之前测试了下</p>
+<h1 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h1><p>点击开始构建按钮<br><img src="https://img-blog.csdnimg.cn/20190902151036641.png" alt="在这里插入图片描述"></p>
+<p>修改项目代码<br><img src="https://img-blog.csdnimg.cn/20190902151320627.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li>查看jenkins日志<br><img src="https://img-blog.csdnimg.cn/20190902151412962.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+<li>shell 脚本执行<br><img src="https://img-blog.csdnimg.cn/20190902151438331.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+<li>构建完成<br><img src="https://img-blog.csdnimg.cn/20190902151459804.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+<li>访问项目<br><img src="https://img-blog.csdnimg.cn/20190902151533938.png" alt="在这里插入图片描述"><h1 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h1></li>
+<li>在粘贴shell脚本的时候注意空格，否则会出现<br><img src="https://img-blog.csdnimg.cn/2019090215091055.png" alt="在这里插入图片描述"></li>
+<li>关于jenkis在那？<br>一旦安装成功会在当前用户家下有个隐藏文件.jenkins</li>
+<li>关于项目构建后jenkins的变化<br>一旦项目构建成功就会多出一个workspace的目录，里面就是项目构建代码<br><img src="https://img-blog.csdnimg.cn/20190902151734859.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><img src="https://img-blog.csdnimg.cn/20190902151921782.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4MjYzMDgz,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+</ul>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">希望对您有所帮助</span>
+      <div class="donation-body">
+        <div class="tip text-center">May all the ordinary are great, all the ignoble bloom</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>smile</span>
+            
+            <img src="/images/temp/1.jpeg" alt>
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2019/09/08/简单日志aop和注解实现/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/2019/09/08/springboot使用spring-session完成session共享/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/archives/" rel="noopener noreferrer" target="_self">
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/category/" rel="noopener noreferrer" target="_self">
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/tag/" rel="noopener noreferrer" target="_self">
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/link/" rel="noopener noreferrer" target="_self">
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/about/" rel="noopener noreferrer" target="_self">
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a class="CIRCLE" href="/search/" rel="noopener noreferrer" target="_self">
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+<!-- Gitalk评论插件通用代码 -->
+<div id="gitalk-container"></div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script>
+const gitalk = new Gitalk({
+  clientID: '277317290454635afa73',
+  clientSecret: '78223c859304da5e8d71bfce136d436c6ff95c37',
+  repo: 'blog-comment',
+  owner: 'forsigner',
+  // 在这里设置一下截取前50个字符串, 这是因为 github 对 label 的长度有了要求, 如果超过
+  // 50个字符串则会报错.
+  // id: location.pathname.split('/').pop().substring(0, 49),
+  id: location.pathname,
+  admin: ['forsigner'],
+  // facebook-like distraction free mode
+  distractionFreeMode: false
+})
+gitalk.render('gitalk-container')
+</script>
+<!-- Gitalk代码结束 -->
+
+
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
